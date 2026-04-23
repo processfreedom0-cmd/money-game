@@ -3,316 +3,452 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>おかねと信用の人生ゲーム 🎲</title>
+<title>おかねと しんようの ゲーム 🎲</title>
 <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f7f3e9;--card:#fff;--text:#2d3436;--text2:#636e72;
-  --green:#27ae60;--blue:#2980b9;--red:#e74c3c;--purple:#8e44ad;
-  --orange:#e67e22;--yellow:#f1c40f;--teal:#1abc9c;--pink:#e91e63;
-  --trust:#ff6b35;--shadow:0 4px 20px rgba(0,0,0,.1);
+  --bg:#fff9f0;--card:#fff;--text:#2d2d2d;--text2:#888;
+  --green:#2ecc71;--blue:#3498db;--red:#e74c3c;--purple:#9b59b6;
+  --orange:#f39c12;--yellow:#f1c40f;--trust:#ff6b35;--pink:#e91e63;
+  --shadow:0 6px 24px rgba(0,0,0,.12);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Kosugi Maru',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body{font-family:'Kosugi Maru',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ===== スクリーン ===== */
 .screen{display:none;min-height:100vh;}
 .screen.active{display:block;}
 
-/* タイトル */
-#screenTitle{
-  background:linear-gradient(160deg,#0f2027,#203a43,#2c5364);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:40px 20px;text-align:center;color:white;
+/* ===== タイトル ===== */
+#sTitle{
+  background:linear-gradient(160deg,#1a1a2e,#16213e,#0f3460);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:30px 20px;text-align:center;color:white;
+  position:relative;overflow:hidden;
 }
-.title-logo{font-size:60px;margin-bottom:14px;animation:float 3s ease-in-out infinite;}
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
-.title-main{font-size:22px;font-weight:700;letter-spacing:2px;margin-bottom:6px;}
-.title-sub{font-size:12px;opacity:.7;margin-bottom:32px;line-height:2;}
+.stars-bg{position:absolute;inset:0;pointer-events:none;}
+.star{position:absolute;background:white;border-radius:50%;animation:twinkle 2s ease-in-out infinite;}
+@keyframes twinkle{0%,100%{opacity:.2;}50%{opacity:1;}}
+.title-char{font-size:80px;animation:bounce 1s ease-in-out infinite;display:block;margin-bottom:10px;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-15px);}}
+.title-main{font-size:28px;font-weight:700;letter-spacing:2px;margin-bottom:8px;text-shadow:0 2px 10px rgba(0,0,0,.5);}
+.title-sub{font-size:14px;opacity:.75;margin-bottom:32px;line-height:2;}
 .title-btn{
   background:linear-gradient(135deg,#f7971e,#ffd200);color:#333;border:none;
-  border-radius:50px;padding:16px 40px;font-family:'Kosugi Maru',sans-serif;
-  font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(247,151,30,.5);
+  border-radius:60px;padding:20px 50px;font-family:'Kosugi Maru',sans-serif;
+  font-size:22px;font-weight:700;cursor:pointer;
+  box-shadow:0 6px 24px rgba(247,151,30,.6);
+  animation:pulse 1.5s ease-in-out infinite;
 }
-.title-feats{
-  margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:320px;
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+.music-btn{
+  margin-top:16px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);
+  color:white;border-radius:30px;padding:10px 24px;font-family:'Kosugi Maru',sans-serif;
+  font-size:14px;cursor:pointer;
 }
-.feat{background:rgba(255,255,255,.1);border-radius:10px;padding:10px;font-size:12px;text-align:center;}
-.feat .fi{font-size:22px;display:block;margin-bottom:4px;}
 
-/* キャラ作成 */
-#screenChar{background:linear-gradient(160deg,#4facfe,#00f2fe);padding:20px;min-height:100vh;}
-.char-title{text-align:center;color:white;font-size:19px;font-weight:700;margin-bottom:18px;padding-top:8px;}
-.char-card{background:white;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow);}
-.char-card h3{font-size:13px;color:var(--text2);margin-bottom:10px;}
-.char-input{width:100%;padding:13px;border:2px solid #e0e0e0;border-radius:10px;font-family:'Kosugi Maru',sans-serif;font-size:17px;outline:none;text-align:center;}
-.char-input:focus{border-color:#4facfe;}
-.avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
-.av{font-size:30px;text-align:center;padding:8px;border-radius:10px;cursor:pointer;border:3px solid transparent;background:#f8f9fa;}
-.av.sel{border-color:#4facfe;background:#e3f2fd;}
-.dream-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.dr{padding:11px 8px;border-radius:10px;cursor:pointer;border:3px solid transparent;background:#f8f9fa;text-align:center;font-size:11px;}
-.dr .de{font-size:24px;display:block;margin-bottom:3px;}
-.dr.sel{border-color:#4facfe;background:#e3f2fd;}
-.start-btn{display:block;width:100%;padding:15px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:12px;font-family:'Kosugi Maru',sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-top:18px;}
+/* ===== キャラ作成 ===== */
+#sChar{background:linear-gradient(160deg,#667eea,#764ba2);padding:20px;min-height:100vh;}
+.char-title{text-align:center;color:white;font-size:22px;font-weight:700;margin-bottom:20px;padding-top:10px;}
+.char-card{background:white;border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow);}
+.char-card h3{font-size:16px;color:var(--text2);margin-bottom:12px;}
+.char-input{
+  width:100%;padding:16px;border:3px solid #e0e0e0;border-radius:14px;
+  font-family:'Kosugi Maru',sans-serif;font-size:20px;outline:none;text-align:center;
+}
+.char-input:focus{border-color:#667eea;}
+.av-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.av{
+  font-size:36px;text-align:center;padding:10px 6px;border-radius:14px;
+  cursor:pointer;border:4px solid transparent;background:#f8f9fa;
+  transition:all .2s;
+}
+.av:hover{transform:scale(1.1);}
+.av.sel{border-color:#667eea;background:#e8e4ff;transform:scale(1.15);}
+.dr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.dr{
+  padding:14px 10px;border-radius:14px;cursor:pointer;border:4px solid transparent;
+  background:#f8f9fa;text-align:center;font-size:13px;transition:all .2s;
+}
+.dr .de{font-size:30px;display:block;margin-bottom:5px;}
+.dr.sel{border-color:#667eea;background:#e8e4ff;}
+.start-btn{
+  display:block;width:100%;padding:18px;
+  background:linear-gradient(135deg,#f7971e,#ffd200);
+  color:#333;border:none;border-radius:16px;
+  font-family:'Kosugi Maru',sans-serif;font-size:18px;font-weight:700;
+  cursor:pointer;margin-top:20px;box-shadow:0 4px 16px rgba(247,151,30,.4);
+}
 
-/* メイン */
-#screenMain{background:var(--bg);padding-bottom:90px;}
-.main-header{background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;}
-.hchar{display:flex;align-items:center;gap:8px;}
-.hav{font-size:26px;}
-.hname{font-size:14px;font-weight:700;}
-.hstage{font-size:11px;opacity:.8;}
-.hage{background:rgba(255,255,255,.25);border-radius:20px;padding:5px 12px;font-size:13px;font-weight:700;}
+/* ===== メイン ===== */
+#sMain{background:var(--bg);padding-bottom:100px;}
 
-/* ダブルステータスバー */
-.status-bar{background:white;padding:10px 12px;border-bottom:3px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+/* ヘッダー */
+.main-hdr{
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  color:white;padding:14px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.hdr-char{display:flex;align-items:center;gap:10px;}
+.hdr-av{font-size:32px;animation:idleWiggle 3s ease-in-out infinite;}
+@keyframes idleWiggle{0%,100%{transform:rotate(0);}25%{transform:rotate(-5deg);}75%{transform:rotate(5deg);}}
+.hdr-name{font-size:15px;font-weight:700;}
+.hdr-stage{font-size:12px;opacity:.8;}
+.hdr-age{background:rgba(255,255,255,.25);border-radius:20px;padding:6px 14px;font-size:14px;font-weight:700;}
+
+/* ダブルステータス */
+.stat-wrap{background:white;padding:12px;border-bottom:3px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.06);}
 .stat-row{display:flex;gap:8px;overflow-x:auto;margin-bottom:8px;}
 .stat-row:last-child{margin-bottom:0;}
-.stat{background:#f8f9fa;border-radius:9px;padding:7px 11px;flex-shrink:0;text-align:center;min-width:72px;}
-.stat .sl{font-size:10px;color:var(--text2);}
-.stat .sv{font-size:14px;font-weight:700;}
+.stat{
+  background:#f8f9fa;border-radius:12px;padding:10px 14px;flex-shrink:0;
+  text-align:center;min-width:80px;
+}
+.stat .sl{font-size:11px;color:var(--text2);}
+.stat .sv{font-size:16px;font-weight:700;}
 .stat.sm .sv{color:var(--green);}
 .stat.ss .sv{color:var(--blue);}
 .stat.si .sv{color:var(--purple);}
-.stat.sh .sv{color:var(--pink);}
-/* 信用メーター */
-.trust-bar-wrap{padding:0 2px;}
-.trust-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;}
-.trust-track{height:14px;background:#eee;border-radius:7px;overflow:hidden;position:relative;}
-.trust-fill{height:100%;border-radius:7px;transition:width .5s;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;}
-.trust-fill span{font-size:10px;color:white;font-weight:700;}
-.trust-rating{font-size:10px;font-weight:700;margin-top:3px;text-align:right;}
+
+/* 信用バー */
+.trust-wrap{padding:0 4px;}
+.trust-lbl{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:5px;}
+.trust-track{height:20px;background:#f0f0f0;border-radius:10px;overflow:hidden;}
+.trust-fill{height:100%;border-radius:10px;transition:width .6s;display:flex;align-items:center;justify-content:center;}
+.trust-fill span{font-size:11px;color:white;font-weight:700;}
+
+/* CPU比較パネル */
+.cpu-panel{
+  background:white;padding:12px 14px;border-bottom:3px solid #eee;
+}
+.cpu-panel-title{font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:700;}
+.cpu-row{display:flex;gap:10px;overflow-x:auto;}
+.cpu-card{
+  background:#f8f9fa;border-radius:12px;padding:10px;flex-shrink:0;
+  min-width:110px;text-align:center;position:relative;
+}
+.cpu-av{font-size:28px;display:block;}
+.cpu-av.cpu-anim{animation:cpuBounce .5s ease;}
+@keyframes cpuBounce{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}};
+.cpu-name{font-size:11px;font-weight:700;margin-top:3px;}
+.cpu-money{font-size:12px;color:var(--green);font-weight:700;}
+.cpu-trust-mini{height:6px;background:#eee;border-radius:3px;margin-top:4px;overflow:hidden;}
+.cpu-trust-fill{height:100%;border-radius:3px;background:linear-gradient(to right,#f7971e,#ffd200);transition:width .5s;}
+.cpu-rank{
+  position:absolute;top:-6px;right:-6px;
+  background:var(--yellow);color:#333;border-radius:50%;
+  width:20px;height:20px;font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
 
 /* 進行バー */
-.life-prog{padding:6px 14px;background:white;border-bottom:2px solid #eee;}
-.life-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:3px;}
-.prog-track{height:6px;background:#eee;border-radius:3px;}
-.prog-fill{height:100%;border-radius:3px;background:linear-gradient(to right,#667eea,#764ba2);transition:width .5s;}
+.prog-wrap{padding:8px 14px;background:white;border-bottom:2px solid #eee;}
+.prog-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px;}
+.prog-track{height:8px;background:#eee;border-radius:4px;}
+.prog-fill{height:100%;border-radius:4px;background:linear-gradient(to right,#667eea,#764ba2);transition:width .6s;}
 
 /* タブ */
-.tab-bar{display:flex;background:white;padding:4px 6px;gap:3px;position:sticky;top:0;z-index:50;border-bottom:2px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.06);}
-.tab{flex:1;padding:8px 3px;text-align:center;font-size:9px;font-weight:700;border-radius:7px;cursor:pointer;color:var(--text2);transition:all .2s;}
+.tab-bar{
+  display:flex;background:white;padding:5px 8px;gap:4px;
+  position:sticky;top:0;z-index:50;border-bottom:3px solid #eee;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+.tab{
+  flex:1;padding:10px 3px;text-align:center;font-size:10px;font-weight:700;
+  border-radius:10px;cursor:pointer;color:var(--text2);transition:all .2s;
+}
 .tab.active{background:linear-gradient(135deg,#667eea,#764ba2);color:white;}
-.tab-content{display:none;padding:13px;}
+.tab-content{display:none;padding:14px;}
 .tab-content.active{display:block;}
 
-/* セクションタイトル */
-.sec{font-size:13px;font-weight:700;color:var(--text2);margin:13px 0 9px;display:flex;align-items:center;gap:5px;}
+/* セクション */
+.sec{font-size:15px;font-weight:700;color:var(--text2);margin:14px 0 10px;display:flex;align-items:center;gap:6px;}
 .sec::after{content:'';flex:1;height:2px;background:#e0e0e0;border-radius:2px;}
 .sec:first-child{margin-top:0;}
 
 /* カード */
-.card{background:white;border-radius:14px;padding:14px;margin-bottom:11px;box-shadow:var(--shadow);}
+.card{background:white;border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
 
-/* 信用ミッション */
-.mission-card{
-  background:linear-gradient(135deg,#fff3e0,#ffe0b2);border-radius:14px;
-  padding:14px;margin-bottom:11px;box-shadow:var(--shadow);
-  border-left:4px solid var(--trust);
+/* ステージバナー */
+.stage-banner{
+  border-radius:18px;padding:18px;margin-bottom:14px;text-align:center;
+  box-shadow:var(--shadow);
 }
-.mission-card.hard{background:linear-gradient(135deg,#fce4ec,#f8bbd0);border-color:var(--red);}
-.mission-card.easy{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-color:var(--green);}
-.mission-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.mission-icon{font-size:32px;}
-.mission-title{font-size:14px;font-weight:700;}
-.mission-trust{font-size:11px;color:var(--trust);font-weight:700;}
-.mission-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;}
-.mission-btns{display:flex;gap:8px;}
-.mbtn{flex:1;padding:10px;border:none;border-radius:9px;font-family:'Kosugi Maru',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
-.mbtn-accept{background:linear-gradient(135deg,#56ab2f,#a8e063);color:white;}
-.mbtn-refuse{background:#ecf0f1;color:var(--text2);}
-.mission-reward{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
-.reward-badge{background:white;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700;}
+.stage-emoji{font-size:50px;display:block;margin-bottom:8px;animation:stagePop .5s ease;}
+@keyframes stagePop{from{transform:scale(0);}to{transform:scale(1);}}
+.stage-name{font-size:20px;font-weight:700;}
+.stage-desc{font-size:13px;opacity:.85;margin-top:6px;line-height:1.8;}
 
-/* 仕事 */
-.job-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.job-card{background:white;border-radius:12px;padding:12px 9px;text-align:center;box-shadow:var(--shadow);cursor:pointer;border:3px solid transparent;transition:all .2s;}
+/* 仕事グリッド */
+.job-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.job-card{
+  background:white;border-radius:16px;padding:16px 12px;text-align:center;
+  box-shadow:var(--shadow);cursor:pointer;border:4px solid transparent;transition:all .2s;
+}
+.job-card:active{transform:scale(.95);}
 .job-card.sel{border-color:var(--blue);background:#e3f2fd;}
-.job-card.locked{opacity:.45;cursor:not-allowed;}
-.je{font-size:28px;display:block;margin-bottom:4px;}
-.jn{font-size:12px;font-weight:700;}
-.js{font-size:11px;color:var(--green);font-weight:700;margin-top:2px;}
-.jt{font-size:10px;color:var(--trust);margin-top:2px;}
-.jd{font-size:10px;color:var(--text2);}
-.locked-msg{font-size:10px;color:var(--red);margin-top:2px;}
+.job-card.locked{opacity:.4;cursor:not-allowed;}
+.je{font-size:36px;display:block;margin-bottom:6px;}
+.jn{font-size:14px;font-weight:700;}
+.js{font-size:13px;color:var(--green);font-weight:700;margin-top:4px;}
+.jt{font-size:11px;color:var(--trust);margin-top:3px;}
 
 /* ボタン */
-.btn{display:block;width:100%;padding:12px;border:none;border-radius:11px;font-family:'Kosugi Maru',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-align:center;transition:all .2s;margin-bottom:8px;}
+.btn{
+  display:block;width:100%;padding:16px;border:none;border-radius:14px;
+  font-family:'Kosugi Maru',sans-serif;font-size:16px;font-weight:700;
+  cursor:pointer;text-align:center;transition:all .2s;margin-bottom:10px;
+}
 .btn:active{transform:scale(.97);}
-.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:white;}
 .btn-green{background:linear-gradient(135deg,#56ab2f,#a8e063);color:white;}
 .btn-orange{background:linear-gradient(135deg,#f7971e,#ffd200);color:#333;}
 .btn-red{background:linear-gradient(135deg,#f85032,#e73827);color:white;}
+.btn-blue{background:linear-gradient(135deg,#2193b0,#6dd5ed);color:white;}
 .btn-gray{background:#ecf0f1;color:var(--text2);}
+.btn-purple{background:linear-gradient(135deg,#8e44ad,#c39bd3);color:white;}
 
-/* 投資 */
-.inv-card{background:white;border-radius:12px;padding:13px;margin-bottom:9px;box-shadow:var(--shadow);border:2px solid transparent;}
+/* ミッションカード */
+.mission-card{
+  border-radius:16px;padding:16px;margin-bottom:12px;
+  box-shadow:var(--shadow);border-left:6px solid var(--trust);
+  background:linear-gradient(135deg,#fff8f0,#ffe8d6);
+}
+.mission-card.hard{border-color:var(--red);background:linear-gradient(135deg,#fff0f0,#ffd6d6);}
+.mission-card.easy{border-color:var(--green);background:linear-gradient(135deg,#f0fff4,#d6f5e3);}
+.mission-emoji{font-size:40px;display:block;margin-bottom:8px;}
+.mission-title{font-size:16px;font-weight:700;margin-bottom:6px;}
+.mission-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;}
+.mission-rewards{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.reward-tag{background:white;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+.mission-btns{display:flex;gap:10px;}
+.mbtn{
+  flex:1;padding:12px;border:none;border-radius:12px;
+  font-family:'Kosugi Maru',sans-serif;font-size:14px;font-weight:700;cursor:pointer;
+}
+.mbtn-yes{background:linear-gradient(135deg,#56ab2f,#a8e063);color:white;}
+.mbtn-no{background:#ecf0f1;color:var(--text2);}
+
+/* 投資カード */
+.inv-card{
+  background:white;border-radius:16px;padding:14px;margin-bottom:10px;
+  box-shadow:var(--shadow);border:3px solid transparent;transition:all .2s;
+  cursor:pointer;
+}
 .inv-card.sel-inv{border-color:var(--purple);}
-.inv-head{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
-.inv-ic{font-size:30px;}
-.inv-nm{font-size:13px;font-weight:700;}
-.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;margin-top:2px;}
+.inv-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.inv-ic{font-size:36px;}
+.inv-nm{font-size:15px;font-weight:700;}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-top:3px;}
 .br{background:#ffebee;color:#c62828;}
 .bm{background:#f3e5f5;color:#6a1b9a;}
 .bs{background:#e3f2fd;color:#1565c0;}
 .bss{background:#e8f5e9;color:#2e7d32;}
-.inv-desc{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:7px;}
-.inv-stats{display:flex;gap:6px;flex-wrap:wrap;}
-.inv-st{background:#f8f9fa;border-radius:5px;padding:3px 7px;font-size:10px;}
+.inv-desc{font-size:12px;color:var(--text2);line-height:1.7;}
 
 /* 支出 */
-.exp-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f5f5f5;}
+.exp-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:2px solid #f5f5f5;}
 .exp-item:last-child{border-bottom:none;}
-.el{display:flex;align-items:center;gap:9px;}
-.ee{font-size:20px;}
-.en{font-size:12px;font-weight:700;}
-.ed{font-size:10px;color:var(--text2);}
-.ep{font-size:13px;font-weight:700;color:var(--red);}
-
-/* 買い物 */
-.buy-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-
-/* グラフ */
-.chart-wrap{background:#f8f9fa;border-radius:11px;padding:13px;margin-bottom:11px;}
-.bar-row{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
-.bl{font-size:11px;color:var(--text2);width:52px;flex-shrink:0;}
-.bt{flex:1;background:#eee;border-radius:5px;height:16px;overflow:hidden;}
-.bf{height:100%;border-radius:5px;transition:width .5s;display:flex;align-items:center;padding-left:5px;}
-.bf span{font-size:9px;color:white;font-weight:700;white-space:nowrap;}
-
-/* 実績 */
-.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.ach{background:white;border-radius:10px;padding:11px;text-align:center;box-shadow:var(--shadow);opacity:.35;}
-.ach.unlk{opacity:1;border:2px solid var(--yellow);}
-.aei{font-size:26px;margin-bottom:3px;}
-.anm{font-size:11px;font-weight:700;}
-.ade{font-size:10px;color:var(--text2);margin-top:2px;}
+.el{display:flex;align-items:center;gap:10px;}
+.ee{font-size:26px;}
+.en{font-size:14px;font-weight:700;}
+.ep{font-size:15px;font-weight:700;color:var(--red);}
 
 /* ログ */
-.log-area{background:#f8f9fa;border-radius:10px;padding:11px;max-height:220px;overflow-y:auto;}
-.log-item{font-size:12px;padding:4px 0;border-bottom:1px solid #eee;color:var(--text2);line-height:1.5;}
+.log-area{background:#f8f9fa;border-radius:14px;padding:14px;max-height:240px;overflow-y:auto;}
+.log-item{font-size:13px;padding:6px 0;border-bottom:1px solid #eee;color:var(--text2);line-height:1.6;}
 .log-item:last-child{border-bottom:none;}
 .log-item.pos{color:var(--green);}
 .log-item.neg{color:var(--red);}
-.log-item.evt{color:var(--purple);}
 .log-item.trst{color:var(--trust);}
 .log-item.stg{color:var(--orange);font-weight:700;}
 
 /* 入力 */
-.input-row{display:flex;gap:7px;margin-top:7px;}
-.input-row input{flex:1;padding:10px;border:2px solid #e0e0e0;border-radius:9px;font-family:'Kosugi Maru',sans-serif;font-size:14px;outline:none;}
+.input-row{display:flex;gap:8px;margin-top:10px;}
+.input-row input{
+  flex:1;padding:14px;border:3px solid #e0e0e0;border-radius:12px;
+  font-family:'Kosugi Maru',sans-serif;font-size:16px;outline:none;
+}
 .input-row input:focus{border-color:var(--blue);}
-.input-row button{padding:10px 13px;background:var(--blue);color:white;border:none;border-radius:9px;font-family:'Kosugi Maru',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+.input-row button{
+  padding:12px 16px;background:var(--blue);color:white;border:none;
+  border-radius:12px;font-family:'Kosugi Maru',sans-serif;font-size:13px;font-weight:700;cursor:pointer;
+}
+
+/* グラフ */
+.chart-wrap{background:#f8f9fa;border-radius:14px;padding:14px;margin-bottom:12px;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.bl{font-size:12px;color:var(--text2);width:55px;flex-shrink:0;}
+.bt{flex:1;background:#eee;border-radius:6px;height:20px;overflow:hidden;}
+.bf{height:100%;border-radius:6px;transition:width .6s;display:flex;align-items:center;padding-left:6px;}
+.bf span{font-size:10px;color:white;font-weight:700;white-space:nowrap;}
+
+/* 実績 */
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ach{background:white;border-radius:14px;padding:14px;text-align:center;box-shadow:var(--shadow);opacity:.3;}
+.ach.unlk{opacity:1;border:3px solid var(--yellow);}
+.aei{font-size:32px;margin-bottom:4px;}
+.anm{font-size:13px;font-weight:700;}
+.ade{font-size:11px;color:var(--text2);margin-top:3px;}
 
 /* FAB */
-.fab{position:fixed;bottom:16px;right:16px;background:linear-gradient(135deg,#f7971e,#ffd200);color:#333;border:none;border-radius:50px;padding:13px 20px;font-family:'Kosugi Maru',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(247,151,30,.5);z-index:100;}
+.fab{
+  position:fixed;bottom:16px;right:16px;
+  background:linear-gradient(135deg,#f7971e,#ffd200);
+  color:#333;border:none;border-radius:60px;padding:16px 24px;
+  font-family:'Kosugi Maru',sans-serif;font-size:16px;font-weight:700;
+  cursor:pointer;box-shadow:0 6px 24px rgba(247,151,30,.5);z-index:100;
+}
 .fab:active{transform:scale(.95);}
 
 /* モーダル */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center;padding:18px;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:20px;}
 .overlay.show{display:flex;}
-.modal{background:white;border-radius:20px;padding:24px;width:100%;max-width:340px;text-align:center;animation:popIn .3s ease;}
-@keyframes popIn{from{transform:scale(.8);opacity:0;}to{transform:scale(1);opacity:1;}}
-.me{font-size:54px;margin-bottom:9px;}
-.modal h2{font-size:17px;margin-bottom:7px;}
-.modal p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:13px;white-space:pre-line;}
-.ma{font-size:20px;font-weight:700;color:var(--green);margin:7px 0 13px;}
+.modal{
+  background:white;border-radius:24px;padding:28px;width:100%;max-width:360px;
+  text-align:center;animation:popIn .3s ease;
+}
+@keyframes popIn{from{transform:scale(.7);opacity:0;}to{transform:scale(1);opacity:1;}}
+.me{font-size:64px;margin-bottom:12px;display:block;animation:spin .5s ease;}
+@keyframes spin{from{transform:rotate(-20deg) scale(.8);}to{transform:rotate(0) scale(1);}}
+.modal h2{font-size:20px;margin-bottom:8px;}
+.modal p{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:14px;white-space:pre-line;}
+.ma{font-size:24px;font-weight:700;color:var(--green);margin:8px 0 14px;}
 .ma.neg{color:var(--red);}
-.trust-change{font-size:14px;font-weight:700;color:var(--trust);margin:4px 0 13px;}
-.trust-change.neg{color:var(--red);}
-.choice-btns{display:flex;gap:8px;margin-top:6px;}
-.cbtn{flex:1;padding:12px;border:none;border-radius:10px;font-family:'Kosugi Maru',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
-.cbtn-yes{background:linear-gradient(135deg,#56ab2f,#a8e063);color:white;}
-.cbtn-no{background:#ecf0f1;color:var(--text2);}
+.tc{font-size:16px;font-weight:700;color:var(--trust);margin:4px 0 14px;}
+.tc.neg{color:var(--red);}
+.modal-btn{
+  display:block;width:100%;padding:16px;background:linear-gradient(135deg,#667eea,#764ba2);
+  color:white;border:none;border-radius:14px;font-family:'Kosugi Maru',sans-serif;
+  font-size:16px;font-weight:700;cursor:pointer;
+}
 
 /* エンド */
-#screenEnd{background:linear-gradient(160deg,#0f2027,#203a43,#2c5364);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 20px;text-align:center;color:white;min-height:100vh;}
-.end-total{font-size:42px;font-weight:700;color:var(--yellow);margin:10px 0;}
-.end-trust-score{font-size:28px;font-weight:700;color:#ff6b35;margin:6px 0;}
-.end-stats{background:rgba(255,255,255,.1);border-radius:14px;padding:18px;margin:14px 0;width:100%;}
-.esr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:12px;}
+#sEnd{
+  background:linear-gradient(160deg,#1a1a2e,#16213e,#0f3460);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:30px 20px;text-align:center;color:white;
+}
+.end-podium{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin:20px 0;}
+.podium-item{text-align:center;}
+.podium-av{font-size:36px;display:block;}
+.podium-name{font-size:12px;margin-top:3px;}
+.podium-block{border-radius:8px 8px 0 0;margin-top:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:700;}
+.p1 .podium-block{background:var(--yellow);height:80px;width:70px;color:#333;}
+.p2 .podium-block{background:#aaa;height:60px;width:60px;}
+.p3 .podium-block{background:#cd7f32;height:45px;width:60px;}
+.end-score{font-size:40px;font-weight:700;color:var(--yellow);margin:10px 0;}
+.end-trust{font-size:26px;font-weight:700;color:var(--trust);margin:6px 0;}
+.end-stats{background:rgba(255,255,255,.1);border-radius:16px;padding:16px;margin:14px 0;width:100%;}
+.esr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:13px;}
 .esr:last-child{border-bottom:none;}
-.retry-btn{background:linear-gradient(135deg,#f7971e,#ffd200);color:#333;border:none;border-radius:50px;padding:13px 34px;font-family:'Kosugi Maru',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;}
+.retry-btn{background:linear-gradient(135deg,#f7971e,#ffd200);color:#333;border:none;border-radius:50px;padding:16px 40px;font-family:'Kosugi Maru',sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-top:16px;}
+
+/* コイン飛ぶアニメ */
+.coin-fly{
+  position:fixed;pointer-events:none;z-index:300;
+  font-size:28px;animation:coinFly 1s ease forwards;
+}
+@keyframes coinFly{
+  0%{transform:translateY(0) scale(1);opacity:1;}
+  100%{transform:translateY(-120px) scale(1.5);opacity:0;}
+}
+/* 信用UP演出 */
+.trust-up{
+  position:fixed;pointer-events:none;z-index:300;
+  font-size:20px;font-weight:700;color:var(--trust);
+  animation:trustFloat 1.2s ease forwards;
+}
+@keyframes trustFloat{
+  0%{transform:translateY(0);opacity:1;}
+  100%{transform:translateY(-100px);opacity:0;}
+}
 </style>
 </head>
 <body>
 
 <!-- タイトル -->
-<div id="screenTitle" class="screen active">
-  <div class="title-logo">🎲</div>
-  <div class="title-main">おかねと信用の人生ゲーム</div>
-  <div class="title-sub">お金だけじゃない！「信用」という大切な資産も育てよう<br>小学生から老後まで人生を体験！</div>
-  <button class="title-btn" onclick="showScreen('screenChar')">▶ はじめる！</button>
-  <div class="title-feats">
-    <div class="feat"><span class="fi">💰</span>お金を稼ごう</div>
-    <div class="feat"><span class="fi">🤝</span>信用を積もう</div>
-    <div class="feat"><span class="fi">📈</span>投資でふやそう</div>
-    <div class="feat"><span class="fi">⚡</span>人生イベント！</div>
-  </div>
+<div id="sTitle" class="screen active">
+  <div class="stars-bg" id="starsBg"></div>
+  <span class="title-char">🎲</span>
+  <div class="title-main">おかねと しんようの ゲーム</div>
+  <div class="title-sub">おかねも しんようも たいせつ！<br>しょうがくせいから ろうごまで たいけんしよう</div>
+  <button class="title-btn" onclick="goChar()">▶ はじめる！</button>
+  <button class="music-btn" onclick="toggleBGM()" id="musicBtn">🎵 おんがく: ON</button>
 </div>
 
 <!-- キャラ作成 -->
-<div id="screenChar" class="screen">
-  <div style="background:linear-gradient(160deg,#4facfe,#00f2fe);padding:20px;min-height:100vh;">
-    <div class="char-title">🧑 キャラクターをつくろう</div>
+<div id="sChar" class="screen">
+  <div style="padding:20px;min-height:100vh;">
+    <div class="char-title">🧑 キャラを つくろう！</div>
     <div class="char-card">
-      <h3>📝 なまえ</h3>
-      <input type="text" class="char-input" id="charName" placeholder="なまえをいれてね" maxlength="8">
+      <h3>📝 なまえ（ひらがなOK）</h3>
+      <input type="text" class="char-input" id="charName" placeholder="なまえを いれてね" maxlength="8">
     </div>
     <div class="char-card">
-      <h3>😊 アバター</h3>
-      <div class="avatar-grid" id="avatarGrid"></div>
+      <h3>😊 すきな キャラを えらんでね</h3>
+      <div class="av-grid" id="avGrid"></div>
     </div>
     <div class="char-card">
-      <h3>🌟 しょうらいのゆめ</h3>
-      <div class="dream-grid" id="dreamGrid"></div>
+      <h3>🌟 しょうらいの ゆめ</h3>
+      <div class="dr-grid" id="drGrid"></div>
     </div>
-    <button class="start-btn" onclick="startGame()">🚀 ゲームスタート！</button>
+    <button class="start-btn" onclick="startGame()">🚀 ゲーム スタート！</button>
   </div>
 </div>
 
 <!-- メイン -->
-<div id="screenMain" class="screen">
-  <div class="main-header">
-    <div class="hchar">
-      <div class="hav" id="hAv">🧒</div>
-      <div><div class="hname" id="hNm">-</div><div class="hstage" id="hSt">-</div></div>
+<div id="sMain" class="screen">
+  <!-- ヘッダー -->
+  <div class="main-hdr">
+    <div class="hdr-char">
+      <span class="hdr-av" id="hAv">🧒</span>
+      <div>
+        <div class="hdr-name" id="hNm">-</div>
+        <div class="hdr-stage" id="hSt">-</div>
+      </div>
     </div>
-    <div class="hage" id="hAg">10才</div>
+    <div class="hdr-age" id="hAg">10さい</div>
   </div>
 
-  <!-- ステータスバー -->
-  <div class="status-bar">
+  <!-- ステータス -->
+  <div class="stat-wrap">
     <div class="stat-row">
-      <div class="stat sm"><div class="sl">💰もちがね</div><div class="sv" id="stM">0円</div></div>
-      <div class="stat ss"><div class="sl">🏦ちょきん</div><div class="sv" id="stS">0円</div></div>
-      <div class="stat si"><div class="sl">📈とうし</div><div class="sv" id="stI">0円</div></div>
-      <div class="stat sh"><div class="sl">❤️しあわせ</div><div class="sv" id="stH">100</div></div>
+      <div class="stat sm"><div class="sl">💰 もちがね</div><div class="sv" id="stM">0えん</div></div>
+      <div class="stat ss"><div class="sl">🏦 ちょきん</div><div class="sv" id="stS">0えん</div></div>
+      <div class="stat si"><div class="sl">📈 とうし</div><div class="sv" id="stI">0えん</div></div>
     </div>
-    <!-- 信用メーター -->
-    <div class="trust-bar-wrap">
-      <div class="trust-label">
-        <span>🤝 しんよう（信用残高）</span>
-        <span id="trustVal">50/100</span>
+    <div class="trust-wrap">
+      <div class="trust-lbl">
+        <span>🤝 しんよう（しんらいのポイント）</span>
+        <span id="tVal">50/100</span>
       </div>
       <div class="trust-track">
-        <div class="trust-fill" id="trustFill" style="width:50%;background:linear-gradient(to right,#f7971e,#ffd200);">
-          <span id="trustFillTxt">50</span>
+        <div class="trust-fill" id="tFill" style="width:50%;background:linear-gradient(to right,#f7971e,#ffd200);">
+          <span id="tTxt">50</span>
         </div>
       </div>
-      <div class="trust-rating" id="trustRating">⭐ 信用：ふつう</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:3px;text-align:right;" id="tRating">⭐⭐ ふつう</div>
     </div>
+  </div>
+
+  <!-- CPU比較 -->
+  <div class="cpu-panel">
+    <div class="cpu-panel-title">👥 みんなの じょうきょう（くらべてみよう！）</div>
+    <div class="cpu-row" id="cpuRow"></div>
   </div>
 
   <!-- 進行バー -->
-  <div class="life-prog">
-    <div class="life-labels"><span>小学生</span><span>中学</span><span>高校</span><span>大学</span><span>社会人</span><span>老後</span></div>
-    <div class="prog-track"><div class="prog-fill" id="lifeProg" style="width:0%;"></div></div>
+  <div class="prog-wrap">
+    <div class="prog-labels">
+      <span>しょうがくせい</span><span>ちゅうがく</span><span>こうこう</span><span>だいがく</span><span>しゃかいじん</span><span>ろうご</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="lifeP" style="width:0%;"></div></div>
   </div>
 
   <!-- タブ -->
   <div class="tab-bar">
-    <div class="tab active" onclick="switchTab('life')">🌟 人生</div>
-    <div class="tab" onclick="switchTab('trust')">🤝 信用</div>
+    <div class="tab active" onclick="switchTab('life')">🌟 じんせい</div>
+    <div class="tab" onclick="switchTab('trust')">🤝 しんよう</div>
     <div class="tab" onclick="switchTab('work')">💼 しごと</div>
     <div class="tab" onclick="switchTab('money')">💰 おかね</div>
     <div class="tab" onclick="switchTab('invest')">📈 とうし</div>
@@ -323,86 +459,80 @@ body{font-family:'Kosugi Maru',sans-serif;background:var(--bg);color:var(--text)
   <div class="tab-content active" id="tab-life">
     <div id="stageBanner"></div>
     <div class="card" id="assetCard"></div>
-    <button class="btn btn-orange" onclick="nextMonth()">⏩ 1ヶ月すすむ</button>
-    <button class="btn btn-gray" onclick="nextYear()">⏭ 1年スキップ</button>
+    <button class="btn btn-orange" onclick="nextMonth()">⏩ 1かげつ すすむ！</button>
+    <button class="btn btn-gray" onclick="nextYear()">⏭ 1ねん スキップ</button>
   </div>
 
   <!-- 信用タブ -->
   <div class="tab-content" id="tab-trust">
     <div class="card" style="background:linear-gradient(135deg,#fff8e1,#ffecb3);border:none;">
-      <div style="font-size:14px;font-weight:700;margin-bottom:8px;">🤝 信用ってなに？</div>
-      <div style="font-size:12px;color:#7f6000;line-height:1.8;">
-        信用はお金よりも大切な<b>目に見えない資産</b>だよ！<br>
-        約束を守る・難しい依頼に応える・人を助けることで<b>信用が積みあがる</b>。<br>
-        信用が高いと<b>良い仕事が来る</b>し、<b>お金も借りやすく</b>なるよ！<br>
-        でも一度失うと取り戻すのがとても大変…💦
+      <div style="font-size:16px;font-weight:700;margin-bottom:8px;">🤝 しんようって なに？</div>
+      <div style="font-size:14px;color:#7f6000;line-height:2;">
+        やくそくを まもると しんようが たまるよ！<br>
+        むずかしい おねがいを ひきうけると もっと UP！<br>
+        しんようが たかいと いい しごとが くるよ😊<br>
+        でも やくそくを やぶると すごく さがるよ…💦
       </div>
     </div>
-
-    <div class="sec">📋 信用ミッション</div>
+    <div class="sec">📋 ミッション（やくそく）</div>
     <div id="missionList"></div>
-
-    <div class="card">
-      <div style="font-size:13px;font-weight:700;margin-bottom:8px;">📊 信用の効果</div>
-      <div id="trustEffects" style="font-size:12px;line-height:2;color:var(--text2);"></div>
-    </div>
   </div>
 
-  <!-- しごとタブ -->
+  <!-- 仕事タブ -->
   <div class="tab-content" id="tab-work">
-    <div class="sec">💼 しごとをえらぼう</div>
-    <div class="card" style="background:#e8f5e9;border:none;font-size:12px;color:#2e7d32;padding:10px 14px;">
-      🤝 信用が高いほど、高収入のしごとが解放されるよ！
+    <div class="sec">💼 しごとを えらぼう</div>
+    <div class="card" style="background:#e8f5e9;border:none;font-size:14px;color:#2e7d32;padding:12px 16px;">
+      🔓 しんようが たかいと もっと いい しごとが できるよ！
     </div>
     <div class="job-grid" id="jobGrid"></div>
-    <div class="card" id="jobInfoCard" style="display:none;">
-      <div style="font-size:12px;color:var(--text2);">えらんだしごと</div>
-      <div style="font-size:15px;font-weight:700;margin-top:4px;" id="jobInfoName"></div>
-      <div style="font-size:13px;color:var(--green);margin-top:3px;" id="jobInfoSalary"></div>
-      <div style="font-size:12px;color:var(--text2);margin-top:5px;line-height:1.7;" id="jobInfoDesc"></div>
+    <div class="card" id="jobInfo" style="display:none;">
+      <div style="font-size:13px;color:var(--text2);">えらんだ しごと</div>
+      <div style="font-size:18px;font-weight:700;margin-top:4px;" id="jiName"></div>
+      <div style="font-size:15px;color:var(--green);margin-top:4px;" id="jiSalary"></div>
+      <div style="font-size:13px;color:var(--text2);margin-top:6px;line-height:1.8;" id="jiDesc"></div>
     </div>
-    <button class="btn btn-green" onclick="doWork()">💪 はたらく！（1ヶ月）</button>
+    <button class="btn btn-green" onclick="doWork()">💪 はたらく！（1かげつ）</button>
   </div>
 
   <!-- おかねタブ -->
   <div class="tab-content" id="tab-money">
-    <div class="sec">💸 せいかつひ（まいつき）</div>
-    <div class="card" id="expenseCard"></div>
+    <div class="sec">💸 まいつきの せいかつひ</div>
+    <div class="card" id="expCard"></div>
     <div class="sec">🏦 ちょきん</div>
     <div class="card">
-      <div style="font-size:12px;color:var(--text2);margin-bottom:7px;">もちがねをちょきんにいれよう！安全に増えるよ。</div>
+      <div style="font-size:14px;color:var(--text2);margin-bottom:8px;">もちがねを ちょきんに いれよう！へらないよ！</div>
       <div class="input-row">
         <input type="number" id="saveAmt" placeholder="きんがく">
         <button onclick="doSave()">いれる</button>
       </div>
-      <div class="input-row" style="margin-top:7px;">
-        <input type="number" id="withdrawAmt" placeholder="おろすきんがく">
+      <div class="input-row" style="margin-top:8px;">
+        <input type="number" id="wdAmt" placeholder="おろす きんがく">
         <button onclick="doWithdraw()" style="background:var(--orange);">おろす</button>
       </div>
     </div>
     <div class="sec">🛍 かいもの</div>
-    <div class="buy-grid" id="buyGrid"></div>
+    <div class="job-grid" id="buyGrid"></div>
   </div>
 
-  <!-- とうしタブ -->
+  <!-- 投資タブ -->
   <div class="tab-content" id="tab-invest">
     <div class="card" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);border:none;">
-      <div style="font-size:13px;font-weight:700;margin-bottom:5px;">⚠️ とうしとは？</div>
-      <div style="font-size:12px;color:#7f4f1f;line-height:1.7;">
-        お金をふやすチャンス！でも<b>へることもある</b>よ。<br>
-        「長く持つ」「分けて投資する」ことが大事！
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px;">⚠️ とうしって なに？</div>
+      <div style="font-size:13px;color:#7f4f1f;line-height:1.9;">
+        おかねを ふやす チャンス！でも へることも あるよ。<br>
+        「ながく もつ」「わけて とうしする」ことが たいせつ！
       </div>
     </div>
-    <div class="sec">📊 とうし先をえらぼう</div>
+    <div class="sec">📊 とうし先を えらぼう</div>
     <div id="investList"></div>
     <div class="card">
-      <div style="font-size:13px;font-weight:700;margin-bottom:5px;">💸 とうしする</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:7px;" id="invStatus">とうし中: 0円</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:5px;">💸 とうしする</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:8px;" id="invSt">とうし中: 0えん</div>
       <div class="input-row">
-        <input type="number" id="investAmt" placeholder="きんがく">
+        <input type="number" id="invAmt" placeholder="きんがく">
         <button onclick="doInvest()">とうし</button>
       </div>
-      <button class="btn btn-red" style="margin-top:8px;" onclick="doSell()">📤 うりはらう</button>
+      <button class="btn btn-red" style="margin-top:10px;" onclick="doSell()">📤 うりはらう</button>
     </div>
   </div>
 
@@ -410,451 +540,630 @@ body{font-family:'Kosugi Maru',sans-serif;background:var(--bg);color:var(--text)
   <div class="tab-content" id="tab-log">
     <div class="sec">📊 しさんグラフ</div>
     <div class="chart-wrap">
-      <div class="bar-row"><div class="bl">💰 もちがね</div><div class="bt"><div class="bf" id="gM" style="width:0%;background:linear-gradient(to right,#56ab2f,#a8e063);"><span id="gMt"></span></div></div></div>
-      <div class="bar-row"><div class="bl">🏦 ちょきん</div><div class="bt"><div class="bf" id="gS" style="width:0%;background:linear-gradient(to right,#2193b0,#6dd5ed);"><span id="gSt"></span></div></div></div>
-      <div class="bar-row"><div class="bl">📈 とうし</div><div class="bt"><div class="bf" id="gI" style="width:0%;background:linear-gradient(to right,#8e44ad,#c39bd3);"><span id="gIt"></span></div></div></div>
-      <div class="bar-row"><div class="bl">🤝 信用</div><div class="bt"><div class="bf" id="gT" style="width:0%;background:linear-gradient(to right,#f7971e,#ffd200);"><span id="gTt"></span></div></div></div>
+      <div class="bar-row"><div class="bl">💰もちがね</div><div class="bt"><div class="bf" id="gM" style="width:0%;background:linear-gradient(to right,#56ab2f,#a8e063);"><span id="gMt"></span></div></div></div>
+      <div class="bar-row"><div class="bl">🏦ちょきん</div><div class="bt"><div class="bf" id="gS" style="width:0%;background:linear-gradient(to right,#2193b0,#6dd5ed);"><span id="gSt"></span></div></div></div>
+      <div class="bar-row"><div class="bl">📈とうし</div><div class="bt"><div class="bf" id="gI" style="width:0%;background:linear-gradient(to right,#8e44ad,#c39bd3);"><span id="gIt"></span></div></div></div>
+      <div class="bar-row"><div class="bl">🤝しんよう</div><div class="bt"><div class="bf" id="gT" style="width:0%;background:linear-gradient(to right,#f7971e,#ffd200);"><span id="gTt"></span></div></div></div>
     </div>
-
     <div class="sec">🏆 じっせき</div>
     <div class="ach-grid" id="achGrid"></div>
-
     <div class="sec" style="margin-top:14px;">📜 できごと</div>
     <div class="log-area" id="logArea">
-      <div class="log-item stg">ゲームスタート！人生を歩もう🎮</div>
+      <div class="log-item stg">ゲームスタート！じんせいを あるこう🎮</div>
     </div>
   </div>
 
-  <button class="fab" onclick="nextMonth()">⏩ 次の月</button>
+  <button class="fab" onclick="nextMonth()">⏩ つぎの月</button>
 </div>
 
 <!-- エンド -->
-<div id="screenEnd" class="screen">
-  <div style="font-size:52px;margin-bottom:8px;" id="endEmoji">🏆</div>
-  <div style="font-size:20px;font-weight:700;" id="endName"></div>
-  <div style="font-size:13px;opacity:.7;margin-bottom:12px;">の人生がおわったよ！</div>
-  <div style="font-size:14px;opacity:.8;margin-bottom:4px;">💰 しさん合計</div>
-  <div class="end-total" id="endMoney">0円</div>
-  <div style="font-size:14px;opacity:.8;margin-bottom:4px;">🤝 最終信用スコア</div>
-  <div class="end-trust-score" id="endTrust">0/100</div>
-  <div style="font-size:14px;font-weight:700;margin-bottom:14px;" id="endRank"></div>
+<div id="sEnd" class="screen">
+  <div style="font-size:24px;font-weight:700;margin-bottom:4px;">🎊 ろうごを むかえたよ！</div>
+  <div style="font-size:14px;opacity:.7;margin-bottom:16px;" id="endNm"></div>
+  <div class="end-podium" id="endPodium"></div>
+  <div style="font-size:15px;opacity:.8;margin-bottom:4px;">💰 しさん合計</div>
+  <div class="end-score" id="endMoney">0えん</div>
+  <div style="font-size:15px;opacity:.8;margin-bottom:4px;">🤝 さいしゅう しんようスコア</div>
+  <div class="end-trust" id="endTrust">0/100</div>
+  <div style="font-size:16px;font-weight:700;margin-bottom:14px;" id="endRank"></div>
   <div class="end-stats" id="endStats"></div>
-  <div style="font-size:13px;opacity:.7;line-height:1.9;margin-bottom:16px;" id="endAdvice"></div>
-  <button class="retry-btn" onclick="location.reload()">🔄 もういちど</button>
+  <div style="font-size:13px;opacity:.7;line-height:2;margin-bottom:16px;max-width:320px;" id="endAdvice"></div>
+  <button class="retry-btn" onclick="location.reload()">🔄 もういちど あそぶ！</button>
 </div>
 
 <!-- モーダル -->
-<div class="overlay" id="modalOverlay">
+<div class="overlay" id="ov">
   <div class="modal">
-    <div class="me" id="mEmoji">🎉</div>
-    <h2 id="mTitle"></h2>
-    <p id="mDesc"></p>
-    <div class="ma" id="mAmt" style="display:none;"></div>
-    <div class="trust-change" id="mTrust" style="display:none;"></div>
-    <div class="choice-btns" id="mChoiceBtns" style="display:none;">
-      <button class="cbtn cbtn-yes" id="mBtnYes">引き受ける！</button>
-      <button class="cbtn cbtn-no" id="mBtnNo">ことわる</button>
-    </div>
-    <button class="btn btn-primary" id="mBtnOk" onclick="closeModal()">OK！</button>
+    <span class="me" id="mE">🎉</span>
+    <h2 id="mT"></h2>
+    <p id="mD"></p>
+    <div class="ma" id="mA" style="display:none;"></div>
+    <div class="tc" id="mTr" style="display:none;"></div>
+    <button class="modal-btn" onclick="closeModal()">OK！</button>
   </div>
 </div>
 
 <script>
-// ======== データ ========
-const AVATARS=['👦','👧','🧒','👨','👩','🧑','🐱','🐶','🦊','🐼'];
-const DREAMS=[
-  {emoji:'🏥',name:'お医者さん・看護師',bonus:'health'},
-  {emoji:'💻',name:'プログラマー',bonus:'tech'},
-  {emoji:'📊',name:'ビジネスマン',bonus:'business'},
-  {emoji:'🎨',name:'アーティスト',bonus:'art'},
-  {emoji:'🏗',name:'建築・不動産',bonus:'estate'},
-  {emoji:'🍳',name:'シェフ・料理人',bonus:'food'},
-];
+// ======== BGM（Web Audio API）========
+let audioCtx = null;
+let bgmPlaying = false;
+let bgmInterval = null;
 
-const STAGES=[
-  {id:'elem',  name:'小学生', age:[10,12],emoji:'📚',desc:'お小遣いをやりくりしよう！約束を守ることが信用の第一歩！',color:'linear-gradient(135deg,#a8edea,#fed6e3)'},
-  {id:'mid',   name:'中学生', age:[13,15],emoji:'⚽',desc:'部活や友達との約束を守ろう。信用は少しずつ積みあがる！',color:'linear-gradient(135deg,#fccb90,#d57eeb)'},
-  {id:'high',  name:'高校生', age:[16,18],emoji:'🎵',desc:'バイトで社会を学ぼう。遅刻や無断欠勤は信用ダウン！',color:'linear-gradient(135deg,#84fab0,#8fd3f4)'},
-  {id:'univ',  name:'大学生', age:[19,22],emoji:'🎓',desc:'奨学金・バイト・投資の始めどき。返済は期日を守ろう！',color:'linear-gradient(135deg,#a18cd1,#fbc2eb)'},
-  {id:'work',  name:'社会人', age:[23,59],emoji:'💼',desc:'キャリアを積んで、信用で大きな仕事をつかもう！',color:'linear-gradient(135deg,#667eea,#764ba2)'},
-  {id:'retire',name:'老後',   age:[60,80],emoji:'🌅',desc:'これまでの信用と資産でゆっくり暮らそう！',color:'linear-gradient(135deg,#f7971e,#ffd200)'},
-];
-
-// 仕事（信用要件付き）
-const JOBS={
-  elem:[
-    {id:'chores',emoji:'🧹',name:'おてつだい',salary:2000,trust:0,desc:'家のおてつだい。やるって言ったらやり遂げよう！',diff:'☆☆☆',trustEarn:1},
-    {id:'errand',emoji:'🛒',name:'おつかい',  salary:500, trust:0,desc:'近所のおつかい。メモ通りに正確に！',diff:'☆☆☆',trustEarn:2},
-  ],
-  mid:[
-    {id:'chores',emoji:'🧹',name:'おてつだい',salary:3000,trust:0,desc:'家のお手伝い。続けることが大事！',diff:'☆☆☆',trustEarn:1},
-    {id:'tutor1',emoji:'📖',name:'勉強をおしえる',salary:5000,trust:30,desc:'小学生に勉強を教える。責任大！',diff:'★☆☆',trustEarn:3},
-  ],
-  high:[
-    {id:'part1',emoji:'🍔',name:'ファストフード',salary:45000,trust:0,desc:'遅刻したら信用ダウン！時間を守ろう。',diff:'★☆☆',trustEarn:2},
-    {id:'part2',emoji:'📦',name:'コンビニ',      salary:50000,trust:20,desc:'ミスをすぐに報告すると信用UP！',diff:'★☆☆',trustEarn:3},
-    {id:'part3',emoji:'📸',name:'カメラマン補助',salary:30000,trust:40,desc:'信頼されてお声がかかった仕事！',diff:'★★☆',trustEarn:4},
-  ],
-  univ:[
-    {id:'part1',emoji:'🍔',name:'バイト（飲食）',salary:60000,trust:0,desc:'基本のバイト。続けると信用UP！',diff:'★☆☆',trustEarn:2},
-    {id:'tutor2',emoji:'📚',name:'家庭教師',      salary:80000,trust:50,desc:'信用がないと依頼が来ない仕事！',diff:'★★☆',trustEarn:4},
-    {id:'intern',emoji:'💻',name:'インターン',    salary:40000,trust:60,desc:'信用がないと参加できない！将来の就活に◎',diff:'★★★',trustEarn:5},
-  ],
-  work:[
-    {id:'office',  emoji:'🏢',name:'会社員',     salary:280000,trust:0,  desc:'安定の給料。真面目に取り組もう！',diff:'★★☆',trustEarn:2},
-    {id:'engineer',emoji:'💻',name:'エンジニア', salary:400000,trust:50, desc:'信用が高いと大きなプロジェクトを任される！',diff:'★★★',trustEarn:3},
-    {id:'doctor',  emoji:'👨‍⚕️',name:'お医者さん',salary:600000,trust:70, desc:'信頼がなければ患者さんが来ない！',diff:'★★★',trustEarn:4},
-    {id:'ceo',     emoji:'👔',name:'社長',        salary:1000000,trust:85,desc:'信用なしには会社を動かせない！',diff:'★★★',trustEarn:5},
-    {id:'youtuber',emoji:'🎬',name:'ユーチューバー',salary:0,trust:0,    desc:'当たれば大きい！でもリスク大！',diff:'？？？',trustEarn:0},
-  ],
-  retire:[
-    {id:'pension',emoji:'🏛',name:'年金',         salary:150000,trust:0, desc:'国からもらえる年金だよ。',diff:'☆☆☆',trustEarn:0},
-    {id:'parttime',emoji:'🌻',name:'パート',      salary:80000, trust:0, desc:'無理のない範囲ではたらく。',diff:'★☆☆',trustEarn:1},
-  ],
-};
-
-// 支出
-const EXPENSES={
-  elem:  [{emoji:'🍱',name:'おやつ・学用品',amount:2000}],
-  mid:   [{emoji:'🍱',name:'部活・学用品',amount:5000},{emoji:'📱',name:'スマホ',amount:3000}],
-  high:  [{emoji:'🍱',name:'交通費・食費',amount:8000},{emoji:'📱',name:'スマホ',amount:5000}],
-  univ:  [{emoji:'🍱',name:'食費',amount:30000},{emoji:'🏠',name:'家賃',amount:50000},{emoji:'📱',name:'スマホ',amount:5000}],
-  work:  [{emoji:'🍱',name:'食費',amount:40000},{emoji:'🏠',name:'家賃・住宅',amount:80000},{emoji:'💡',name:'光熱費',amount:15000},{emoji:'📱',name:'スマホ',amount:8000}],
-  retire:[{emoji:'🍱',name:'生活費',amount:60000},{emoji:'🏥',name:'医療費',amount:20000}],
-};
-
-// 買い物
-const BUY=[
-  {emoji:'🎮',name:'ゲーム',    price:5000},
-  {emoji:'👟',name:'くつ',      price:8000},
-  {emoji:'📚',name:'本・参考書',price:2000,trustUp:2},
-  {emoji:'🍕',name:'外食',      price:3000},
-  {emoji:'✈️',name:'旅行',      price:50000},
-  {emoji:'📱',name:'新スマホ',  price:100000},
-];
-
-// 投資
-const INVESTMENTS=[
-  {id:'stock',emoji:'📈',name:'かぶしき',badge:'ハイリスク',bc:'br',desc:'大きくふえることも大きくへることも！長期保有がカギ。',rMin:-0.15,rMax:0.20,stats:['期待利益:高','リスク:高','向き:長期']},
-  {id:'fund', emoji:'📊',name:'投資信託',badge:'ミドル',   bc:'bm',desc:'分散投資でリスクを減らせる！コツコツ積立がおすすめ。',rMin:-0.08,rMax:0.12,stats:['期待利益:中','リスク:中','向き:長期']},
-  {id:'estate',emoji:'🏠',name:'不動産',  badge:'ミドル',  bc:'bm',desc:'じっくりふえるが初期費用が大きい。信用があると有利！',rMin:-0.05,rMax:0.10,stats:['期待利益:中','リスク:中','向き:超長期']},
-  {id:'gold', emoji:'🥇',name:'きん',     badge:'低リスク',bc:'bs',desc:'危機に強い！でもあまり大きくはふえない。',rMin:-0.03,rMax:0.07,stats:['期待利益:低','リスク:低','向き:保険']},
-  {id:'bank', emoji:'🏦',name:'ていきよきん',badge:'安全', bc:'bss',desc:'ほぼへらない！でもふえかたも小さい。',rMin:0.001,rMax:0.002,stats:['期待利益:極低','リスク:なし','向き:安全']},
-];
-
-// 信用ミッション（ステージ別）
-const MISSIONS={
-  elem:[
-    {emoji:'📅',title:'宿題を期限内に終わらせる',desc:'「明日やる」はNG！今日の宿題は今日終わらせよう。',type:'easy',trustReward:5,moneyReward:500,cost:0,difficulty:'かんたん'},
-    {emoji:'🤝',title:'友達との約束を守る',desc:'「また今度ね」ではなく、決めた日時に必ず会おう！',type:'easy',trustReward:5,moneyReward:0,cost:0,difficulty:'かんたん'},
-    {emoji:'📦',title:'近所のおばあちゃんの荷物を持つ',desc:'困っている人を助けることが信用の始まり！',type:'easy',trustReward:8,moneyReward:1000,cost:0,difficulty:'かんたん'},
-  ],
-  mid:[
-    {emoji:'⏰',title:'バイトに絶対遅刻しない',desc:'「少し遅れても大丈夫」はNG！時間厳守が社会のルール。',type:'easy',trustReward:8,moneyReward:3000,cost:0,difficulty:'かんたん'},
-    {emoji:'🤔',title:'難しいお使いを引き受ける',desc:'「できるかな…」でも引き受けてやり遂げると信用大UP！',type:'hard',trustReward:15,moneyReward:5000,cost:0,difficulty:'むずかしい'},
-    {emoji:'💬',title:'ミスをすぐに正直に報告する',desc:'隠すともっとひどくなる。正直さが信用の基本！',type:'mid',trustReward:10,moneyReward:0,cost:0,difficulty:'ふつう'},
-  ],
-  high:[
-    {emoji:'🏆',title:'後輩のバイトを丁寧に指導する',desc:'知識を惜しまず教えると、周りの信用が集まる！',type:'easy',trustReward:10,moneyReward:5000,cost:0,difficulty:'かんたん'},
-    {emoji:'🚨',title:'急なシフトのお願いに応える',desc:'「むずかしい時間帯だけど断れない！」でも引き受ければ信用UP！',type:'hard',trustReward:18,moneyReward:15000,cost:0,difficulty:'むずかしい'},
-    {emoji:'💰',title:'借りた本を期限内に返す',desc:'小さな約束も守ることが大切。',type:'easy',trustReward:5,moneyReward:0,cost:0,difficulty:'かんたん'},
-  ],
-  univ:[
-    {emoji:'📋',title:'グループ発表のリーダーを引き受ける',desc:'責任ある役を引き受けると周りからの信頼が上がる！',type:'hard',trustReward:20,moneyReward:10000,cost:0,difficulty:'むずかしい'},
-    {emoji:'🤝',title:'困っている後輩の相談に乗る',desc:'時間を使って人を助けると信用が積みあがる！',type:'easy',trustReward:8,moneyReward:0,cost:0,difficulty:'かんたん'},
-    {emoji:'📅',title:'レポートの締め切りを必ず守る',desc:'「少し遅れても...」はNG！社会人の準備として大切。',type:'easy',trustReward:10,moneyReward:5000,cost:0,difficulty:'かんたん'},
-  ],
-  work:[
-    {emoji:'💼',title:'無理なスケジュールの仕事を引き受け完遂する',desc:'「できません」より「やります！」の一言が大きな信頼になる。でも手を抜かずにやり遂げることが大事！',type:'hard',trustReward:25,moneyReward:100000,cost:0,difficulty:'超むずかしい'},
-    {emoji:'🙋',title:'会議でリーダーシップを発揮する',desc:'積極的に発言し、チームをまとめると信用が上がる！',type:'mid',trustReward:15,moneyReward:50000,cost:0,difficulty:'ふつう'},
-    {emoji:'🤝',title:'クライアントの無理な依頼に誠実に対応する',desc:'できないことは正直に、できることは全力で。誠実さが信用を生む！',type:'hard',trustReward:20,moneyReward:80000,cost:0,difficulty:'むずかしい'},
-    {emoji:'⏰',title:'絶対に締め切りを守る（残業してでも）',desc:'プロとしての約束を守ることが最大の信用！',type:'mid',trustReward:15,moneyReward:30000,cost:0,difficulty:'ふつう'},
-  ],
-  retire:[
-    {emoji:'💝',title:'地域のボランティア活動をする',desc:'見返りを求めずに人を助けると、最大の信用が生まれる！',type:'easy',trustReward:10,moneyReward:5000,cost:0,difficulty:'かんたん'},
-    {emoji:'📚',title:'若い人に経験を教える（メンター）',desc:'積み上げてきた知識と経験を次の世代に伝えよう！',type:'mid',trustReward:15,moneyReward:20000,cost:0,difficulty:'ふつう'},
-  ],
-};
-
-// ライフイベント（信用も関係するもの）
-const EVENTS={
-  elem:[
-    {emoji:'🎁',title:'お年玉をもらった！',desc:'おじいちゃんからお年玉！',amount:10000,trust:0,type:'pos'},
-    {emoji:'🤒',title:'かぜをひいた',desc:'病院代がかかっちゃった。',amount:-2000,trust:0,type:'neg'},
-    {emoji:'🏆',title:'作文で賞をとった！',desc:'努力が実った！信用もUP！',amount:5000,trust:3,type:'pos'},
-    {emoji:'😢',title:'友達との約束をやぶった',desc:'大事な約束を忘れてしまった…信用ダウン。',amount:0,trust:-8,type:'neg'},
-  ],
-  mid:[
-    {emoji:'⚽',title:'部活合宿費',desc:'合宿がある！お金がかかる。',amount:-20000,trust:0,type:'neg'},
-    {emoji:'💬',title:'友達の秘密を守った',desc:'約束を守り信頼された！',amount:0,trust:8,type:'pos'},
-    {emoji:'📱',title:'スマホをなくした',desc:'弁償…お金も信用もダウン。',amount:-30000,trust:-5,type:'neg'},
-    {emoji:'🤝',title:'困っている友達を助けた',desc:'見返りを求めずに助けた！信用大UP！',amount:0,trust:12,type:'pos'},
-  ],
-  high:[
-    {emoji:'🎓',title:'大学受験の費用',desc:'塾代・受験料がかかる！',amount:-50000,trust:0,type:'neg'},
-    {emoji:'⏰',title:'バイトに遅刻した…',desc:'店長に怒られた。信用ダウン！',amount:-5000,trust:-10,type:'neg'},
-    {emoji:'💝',title:'バイト先に感謝された',desc:'一生懸命働いて評価UP！信用もUP！',amount:20000,trust:10,type:'pos'},
-  ],
-  univ:[
-    {emoji:'💰',title:'奨学金の返済',desc:'返済が始まった…期日を守ろう！',amount:-30000,trust:0,type:'neg'},
-    {emoji:'🤝',title:'返済を期日通りに払った',desc:'ちゃんと返せた！信用UP！',amount:0,trust:8,type:'pos'},
-    {emoji:'😨',title:'友人への貸しお金を踏み倒された',desc:'お金を貸したのに返ってこなかった…。信用の大切さを学んだ。',amount:-20000,trust:0,type:'neg'},
-  ],
-  work:[
-    {emoji:'💰',title:'ボーナス支給！',desc:'信用の積み重ねがボーナスに！',amount:500000,trust:5,type:'pos'},
-    {emoji:'🏠',title:'マイホーム購入',desc:'信用があったから住宅ローンが組めた！',amount:-200000,trust:0,type:'neg'},
-    {emoji:'🤕',title:'体調をくずした',desc:'しばらく休んだ。信用は下がらなかった（ちゃんと報告したから）',amount:-150000,trust:0,type:'neg'},
-    {emoji:'🎉',title:'昇進！',desc:'信用の積み重ねが昇進につながった！',amount:100000,trust:15,type:'pos'},
-    {emoji:'😱',title:'ミスを隠した…',desc:'後でバレてしまった。正直に言えばよかった…信用ダウン。',amount:-50000,trust:-20,type:'neg'},
-    {emoji:'📈',title:'株がV字回復！',desc:'長く持ち続けた甲斐があった！',amount:200000,trust:0,type:'pos'},
-  ],
-  retire:[
-    {emoji:'🏥',title:'入院した',desc:'医療費が大変…でも信用残高があって助かった。',amount:-300000,trust:0,type:'neg'},
-    {emoji:'💝',title:'子供が助けてくれた',desc:'育てた信用が家族に返ってきた！',amount:50000,trust:5,type:'pos'},
-    {emoji:'🌸',title:'感謝状をもらった',desc:'地域への貢献が認められた！信用の総決算！',amount:30000,trust:10,type:'pos'},
-  ],
-};
-
-// 実績
-const ACHIEVEMENTS=[
-  {emoji:'💰',name:'はじめてのちょきん',   desc:'ちょきんをする',key:'firstSave'},
-  {emoji:'📈',name:'はじめての投資',       desc:'とうしをする',key:'firstInvest'},
-  {emoji:'🤝',name:'信用マスター',         desc:'信用が80以上になる',key:'trust80'},
-  {emoji:'💯',name:'信用パーフェクト',     desc:'信用が100になる',key:'trust100'},
-  {emoji:'🏆',name:'100万円達成！',        desc:'しさんが100万円になる',key:'million'},
-  {emoji:'💎',name:'億り人！',             desc:'しさんが1億円になる',key:'billionaire'},
-  {emoji:'🎯',name:'働き者！',             desc:'12ヶ月はたらく',key:'worked12'},
-  {emoji:'🌟',name:'人生の達人',           desc:'老後まで生き抜く',key:'retired'},
-  {emoji:'🏅',name:'約束の人',             desc:'ミッションを10回達成',key:'mission10'},
-  {emoji:'🦁',name:'挑戦者',              desc:'むずかしいミッションを3回達成',key:'hard3'},
-];
-
-// ======== ゲーム状態 ========
-let G={
-  name:'',avatar:'🧒',dream:null,
-  age:10,month:1,
-  money:3000,savings:0,
-  investAmount:0,investValue:0,selectedInvest:null,
-  selectedJob:null,
-  happiness:100,
-  trust:50,  // 0-100
-  totalEarned:0,totalSpent:0,workedMonths:0,
-  missionsDone:0,hardMissionsDone:0,
-  achievements:{},
-  pendingMissions:[],
-};
-let selAvatar='🧒', selDream=null;
-
-// ======== キャラ作成 ========
-function initChar(){
-  document.getElementById('avatarGrid').innerHTML=AVATARS.map(a=>`<div class="av ${a===selAvatar?'sel':''}" onclick="pickAv(this,'${a}')">${a}</div>`).join('');
-  document.getElementById('dreamGrid').innerHTML=DREAMS.map(d=>`<div class="dr" id="dr_${d.bonus}" onclick="pickDream('${d.bonus}')"><span class="de">${d.emoji}</span>${d.name}</div>`).join('');
-}
-function pickAv(el,a){selAvatar=a;document.querySelectorAll('.av').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');}
-function pickDream(b){selDream=DREAMS.find(d=>d.bonus===b);document.querySelectorAll('.dr').forEach(el=>el.classList.remove('sel'));document.getElementById('dr_'+b).classList.add('sel');}
-function startGame(){
-  const n=document.getElementById('charName').value.trim();
-  if(!n){alert('なまえをいれてね！');return;}
-  if(!selDream){alert('ゆめをえらんでね！');return;}
-  G.name=n;G.avatar=selAvatar;G.dream=selDream;
-  showScreen('screenMain');
-  initMain();
+function initAudio(){
+  if(audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
-// ======== メイン初期化 ========
-function initMain(){
-  updateHeader();updateStats();updateTrust();
-  renderStage();renderJobs();renderExpenses();renderBuyGrid();
-  renderInvestList();renderMissions();renderAchievements();updateAsset();updateGraph();
+function playNote(freq, duration, type='sine', vol=0.1){
+  if(!audioCtx || !bgmPlaying) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.start(audioCtx.currentTime);
+  osc.stop(audioCtx.currentTime + duration);
 }
 
-function getStage(){return STAGES.find(s=>G.age>=s.age[0]&&G.age<=s.age[1])||STAGES[STAGES.length-1];}
-
-function updateHeader(){
-  const st=getStage();
-  document.getElementById('hAv').textContent=G.avatar;
-  document.getElementById('hNm').textContent=G.name;
-  document.getElementById('hSt').textContent=st.name;
-  document.getElementById('hAg').textContent=G.age+'才';
-  document.getElementById('lifeProg').style.width=Math.min(100,((G.age-10)/70)*100)+'%';
-}
-
-function updateStats(){
-  document.getElementById('stM').textContent=fmt(G.money);
-  document.getElementById('stS').textContent=fmt(G.savings);
-  document.getElementById('stI').textContent=fmt(G.investValue);
-  document.getElementById('stH').textContent=G.happiness;
-  document.getElementById('invStatus').textContent=`とうし中: ${G.investValue.toLocaleString()}円（もとで: ${G.investAmount.toLocaleString()}円）`;
-}
-
-function updateTrust(){
-  const t=Math.max(0,Math.min(100,G.trust));
-  G.trust=t;
-  document.getElementById('trustVal').textContent=t+'/100';
-  document.getElementById('trustFill').style.width=t+'%';
-  document.getElementById('trustFillTxt').textContent=t;
-  let color,rating;
-  if(t>=90){color='linear-gradient(to right,#1abc9c,#2ecc71)';rating='🌟 信用：伝説レベル！';}
-  else if(t>=70){color='linear-gradient(to right,#27ae60,#a8e063)';rating='⭐⭐⭐ 信用：とても高い！';}
-  else if(t>=50){color='linear-gradient(to right,#f7971e,#ffd200)';rating='⭐⭐ 信用：ふつう';}
-  else if(t>=30){color='linear-gradient(to right,#e74c3c,#ff7675)';rating='⭐ 信用：低め…';}
-  else{color='linear-gradient(to right,#c0392b,#e74c3c)';rating='⚠️ 信用：危険！';}
-  document.getElementById('trustFill').style.background=color;
-  document.getElementById('trustRating').textContent=rating;
-
-  // 信用の効果説明
-  const effects=document.getElementById('trustEffects');
-  if(effects){
-    const bonus=G.trust>=70?'高収入の仕事が解放されている！':'信用を70以上にすると高収入の仕事が解放されるよ！';
-    const loan=G.trust>=60?'銀行から有利な条件でお金を借りられる！':'信用60以上でいい条件のローンが組めるよ。';
-    const job=G.trust>=85?'最高レベルの仕事（社長など）が解放！':'信用85以上で最高レベルの仕事が来るよ！';
-    effects.innerHTML=`🔓 ${bonus}<br>🏦 ${loan}<br>💼 ${job}<br>📊 信用スコアは最終評価にも加算されるよ！`;
+function playSE(type){
+  if(!audioCtx) return;
+  const ctx = audioCtx;
+  if(type === 'coin'){
+    playNote(880, 0.1, 'sine', 0.15);
+    setTimeout(()=>playNote(1100, 0.1, 'sine', 0.12), 80);
+  } else if(type === 'trust'){
+    playNote(660, 0.08, 'sine', 0.1);
+    setTimeout(()=>playNote(880, 0.08, 'sine', 0.1), 60);
+    setTimeout(()=>playNote(1100, 0.15, 'sine', 0.12), 120);
+  } else if(type === 'sad'){
+    playNote(330, 0.2, 'sine', 0.1);
+    setTimeout(()=>playNote(260, 0.3, 'sine', 0.08), 150);
+  } else if(type === 'stage'){
+    [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playNote(f,0.2,'sine',0.12),i*100));
+  } else if(type === 'click'){
+    playNote(600, 0.05, 'square', 0.05);
   }
 }
 
+// BGMメロディー（シンプルなループ）
+const BGM_NOTES = [523,587,659,698,784,698,659,587,523,523,659,784,1047,784,659,523];
+let bgmIdx = 0;
+function startBGM(){
+  if(bgmPlaying) return;
+  bgmPlaying = true;
+  bgmInterval = setInterval(()=>{
+    if(!bgmPlaying) return;
+    playNote(BGM_NOTES[bgmIdx % BGM_NOTES.length], 0.35, 'sine', 0.06);
+    bgmIdx++;
+  }, 400);
+}
+function stopBGM(){
+  bgmPlaying = false;
+  if(bgmInterval) clearInterval(bgmInterval);
+}
+function toggleBGM(){
+  initAudio();
+  if(bgmPlaying){ stopBGM(); document.getElementById('musicBtn').textContent='🔇 おんがく: OFF'; }
+  else { startBGM(); document.getElementById('musicBtn').textContent='🎵 おんがく: ON'; }
+}
+
+// ======== 星の背景 ========
+function initStars(){
+  const bg = document.getElementById('starsBg');
+  for(let i=0;i<40;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random()*3+1;
+    s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*2}s;animation-duration:${1+Math.random()*2}s;`;
+    bg.appendChild(s);
+  }
+}
+initStars();
+
+// ======== エフェクト ========
+function showCoinEffect(x, y){
+  const el = document.createElement('div');
+  el.className = 'coin-fly';
+  el.textContent = '💰';
+  el.style.left = (x||window.innerWidth/2) + 'px';
+  el.style.top = (y||window.innerHeight/2) + 'px';
+  document.body.appendChild(el);
+  playSE('coin');
+  setTimeout(()=>el.remove(), 1000);
+}
+function showTrustEffect(x, y, val){
+  const el = document.createElement('div');
+  el.className = 'trust-up';
+  el.textContent = '🤝 しんよう +' + val;
+  el.style.left = (x||window.innerWidth/2-60) + 'px';
+  el.style.top = (y||window.innerHeight/2) + 'px';
+  document.body.appendChild(el);
+  playSE('trust');
+  setTimeout(()=>el.remove(), 1200);
+}
+
+// ======== データ ========
+const AVATARS = ['👦','👧','🧒','🐱','🐶','🐼','🦊','🐸','🐯','🐻'];
+const DREAMS = [
+  {emoji:'🏥', name:'おいしゃさん', bonus:'health'},
+  {emoji:'💻', name:'プログラマー', bonus:'tech'},
+  {emoji:'📊', name:'かいしゃいん', bonus:'business'},
+  {emoji:'🎨', name:'えかき・クリエーター', bonus:'art'},
+  {emoji:'🏗', name:'けんちく・ふどうさん', bonus:'estate'},
+  {emoji:'🍳', name:'シェフ・りょうりにん', bonus:'food'},
+];
+
+const STAGES=[
+  {id:'elem',  name:'しょうがくせい', age:[10,12], emoji:'📚', desc:'おこづかいを やりくりしよう！やくそくを まもると しんようが たかくなるよ！', color:'linear-gradient(135deg,#a8edea,#fed6e3)'},
+  {id:'mid',   name:'ちゅうがくせい', age:[13,15], emoji:'⚽', desc:'ぶかつに べんきょう！すこしだけ アルバイトも できるよ。', color:'linear-gradient(135deg,#fccb90,#d57eeb)'},
+  {id:'high',  name:'こうこうせい',  age:[16,18], emoji:'🎵', desc:'アルバイトで しゃかいを まなぼう！ちこく したら しんようダウン！', color:'linear-gradient(135deg,#84fab0,#8fd3f4)'},
+  {id:'univ',  name:'だいがくせい',  age:[19,22], emoji:'🎓', desc:'しょうがくきんの へんさいは きじつを まもろう！', color:'linear-gradient(135deg,#a18cd1,#fbc2eb)'},
+  {id:'work',  name:'しゃかいじん',  age:[23,59], emoji:'💼', desc:'しんようを つんで おおきな しごとを つかもう！', color:'linear-gradient(135deg,#667eea,#764ba2)'},
+  {id:'retire',name:'ろうご',        age:[60,80], emoji:'🌅', desc:'これまでの しんようと しさんで ゆっくり くらそう！', color:'linear-gradient(135deg,#f7971e,#ffd200)'},
+];
+
+const JOBS={
+  elem:[
+    {id:'chores',emoji:'🧹',name:'おてつだい',salary:2000,trust:0,desc:'いえの おてつだい。つづけると しんようUP！',trustEarn:2},
+    {id:'errand',emoji:'🛒',name:'おつかい',  salary:500, trust:0,desc:'きんじょの おつかい。メモどおりに！',trustEarn:3},
+  ],
+  mid:[
+    {id:'chores',emoji:'🧹',name:'おてつだい',salary:3000,trust:0,desc:'おてつだいを しっかり しよう！',trustEarn:2},
+    {id:'tutor1',emoji:'📖',name:'おべんきょうを おしえる',salary:5000,trust:30,desc:'しょうがくせいに さんすうを おしえるよ。',trustEarn:4},
+  ],
+  high:[
+    {id:'part1',emoji:'🍔',name:'ファストフード',salary:45000,trust:0,desc:'ちこく したら しんようダウン！じかんを まもろう。',trustEarn:2},
+    {id:'part2',emoji:'📦',name:'コンビニ',salary:50000,trust:20,desc:'ミスを すぐ ほうこくすると しんようUP！',trustEarn:3},
+    {id:'part3',emoji:'📸',name:'カメラマン ほじょ',salary:30000,trust:40,desc:'しんよう されて おこえが かかった しごと！',trustEarn:5},
+  ],
+  univ:[
+    {id:'part1',emoji:'🍔',name:'バイト（いんしょく）',salary:60000,trust:0,desc:'きほんの バイト。つづけると しんようUP！',trustEarn:2},
+    {id:'tutor2',emoji:'📚',name:'かていきょうし',salary:80000,trust:50,desc:'しんようが ないと いらいが こない しごと！',trustEarn:5},
+    {id:'intern',emoji:'💻',name:'インターン',salary:40000,trust:60,desc:'しんようが ないと さんかできない！しゅうかつに ◎',trustEarn:6},
+  ],
+  work:[
+    {id:'office',emoji:'🏢',name:'かいしゃいん',salary:280000,trust:0,desc:'あんていした きゅうりょう。まじめに とりくもう！',trustEarn:2},
+    {id:'engineer',emoji:'💻',name:'エンジニア',salary:400000,trust:50,desc:'しんようが たかいと おおきな プロジェクトを まかされる！',trustEarn:3},
+    {id:'doctor',emoji:'👨‍⚕️',name:'おいしゃさん',salary:600000,trust:70,desc:'しんらいが なければ かんじゃさんが こない！',trustEarn:4},
+    {id:'ceo',emoji:'👔',name:'しゃちょう',salary:1000000,trust:85,desc:'しんようなしには かいしゃを うごかせない！',trustEarn:5},
+    {id:'youtuber',emoji:'🎬',name:'ユーチューバー',salary:0,trust:0,desc:'あたれば おおきい！でも リスクだいじゅう😅',trustEarn:0},
+  ],
+  retire:[
+    {id:'pension',emoji:'🏛',name:'ねんきん',salary:150000,trust:0,desc:'くにから もらえる ねんきんだよ。',trustEarn:0},
+    {id:'parttime',emoji:'🌻',name:'パート',salary:80000,trust:0,desc:'むりのない はんいで はたらく。',trustEarn:1},
+  ],
+};
+
+const EXPENSES={
+  elem:  [{emoji:'🍱',name:'おやつ・がくようひん',amount:2000}],
+  mid:   [{emoji:'🍱',name:'ぶかつ・がくようひん',amount:5000},{emoji:'📱',name:'スマホ',amount:3000}],
+  high:  [{emoji:'🍱',name:'こうつうひ・しょくひ',amount:8000},{emoji:'📱',name:'スマホ',amount:5000}],
+  univ:  [{emoji:'🍱',name:'しょくひ',amount:30000},{emoji:'🏠',name:'やちん',amount:50000},{emoji:'📱',name:'スマホ',amount:5000}],
+  work:  [{emoji:'🍱',name:'しょくひ',amount:40000},{emoji:'🏠',name:'やちん・じゅうたく',amount:80000},{emoji:'💡',name:'こうねつすいひ',amount:15000},{emoji:'📱',name:'スマホ',amount:8000}],
+  retire:[{emoji:'🍱',name:'せいかつひ',amount:60000},{emoji:'🏥',name:'いりょうひ',amount:20000}],
+};
+
+const BUY=[
+  {id:'game',emoji:'🎮',name:'ゲーム',price:5000},
+  {id:'shoes',emoji:'👟',name:'くつ',price:8000},
+  {id:'book',emoji:'📚',name:'ほん・さんこうしょ',price:2000,trustUp:2},
+  {id:'food',emoji:'🍕',name:'がいしょく',price:3000},
+  {id:'trip',emoji:'✈️',name:'りょこう',price:50000},
+  {id:'phone',emoji:'📱',name:'しんスマホ',price:100000},
+];
+
+const INVESTMENTS=[
+  {id:'stock',emoji:'📈',name:'かぶしき',badge:'ハイリスク',bc:'br',desc:'おおきく ふえることも おおきく へることも！ながく もつのが カギ。',rMin:-0.15,rMax:0.20},
+  {id:'fund', emoji:'📊',name:'とうし しんたく',badge:'ミドル',bc:'bm',desc:'いろんな かぶを まとめて かう ほうほう。わけて とうしできる！',rMin:-0.08,rMax:0.12},
+  {id:'estate',emoji:'🏠',name:'ふどうさん',badge:'ミドル',bc:'bm',desc:'じっくり ふえるけど さいしょの ひようが おおきい。',rMin:-0.05,rMax:0.10},
+  {id:'gold', emoji:'🥇',name:'きん',badge:'ていリスク',bc:'bs',desc:'ききに つよい！でも あまり おおきくは ふえない。',rMin:-0.03,rMax:0.07},
+  {id:'bank', emoji:'🏦',name:'ていきよきん',badge:'あんぜん',bc:'bss',desc:'ほぼ へらない！でも ふえかたも とても ちいさい。',rMin:0.001,rMax:0.002},
+];
+
+const MISSIONS={
+  elem:[
+    {emoji:'📅',title:'しゅくだいを きげんまでに おわらせる',desc:'「あしたやる」はダメ！きょうの しゅくだいは きょう やろう！',type:'easy',trust:5,money:500},
+    {emoji:'🤝',title:'ともだちとの やくそくを まもる',desc:'きめた ひじかんに かならず あおう！',type:'easy',trust:5,money:0},
+    {emoji:'📦',title:'きんじょの おばあちゃんの にもつを もつ',desc:'こまっている ひとを たすけると しんようの はじまり！',type:'easy',trust:8,money:1000},
+  ],
+  mid:[
+    {emoji:'⏰',title:'バイトに ぜったい ちこくしない',desc:'「すこし おくれても…」はNG！じかんを まもろう。',type:'easy',trust:8,money:3000},
+    {emoji:'🤔',title:'むずかしい おねがいを ひきうける',desc:'「できるかな…」でも ひきうけて やりとげると しんようだいUP！',type:'hard',trust:15,money:5000},
+    {emoji:'💬',title:'ミスを すぐに しょうじきに ほうこくする',desc:'かくすと もっと ひどくなる。しょうじきさが しんようの きほん！',type:'mid',trust:10,money:0},
+  ],
+  high:[
+    {emoji:'🏆',title:'こうはいの バイトを ていねいに おしえる',desc:'ちしきを おしまず おしえると まわりの しんようが あつまる！',type:'easy',trust:10,money:5000},
+    {emoji:'🚨',title:'きゅうな シフトの おねがいに こたえる',desc:'むずかしい じかんたいでも ひきうければ しんようUP！',type:'hard',trust:18,money:15000},
+  ],
+  univ:[
+    {emoji:'📋',title:'グループはっぴょうの リーダーを ひきうける',desc:'せきにんある やくを ひきうけると まわりから しんらいされる！',type:'hard',trust:20,money:10000},
+    {emoji:'🤝',title:'こまっている こうはいの そうだんに のる',desc:'じかんを つかって ひとを たすけると しんようが つみあがる！',type:'easy',trust:8,money:0},
+  ],
+  work:[
+    {emoji:'💼',title:'むりな スケジュールの しごとを やりとげる',desc:'「できません」より「やります！」が おおきな しんらいになる。でも てを ぬかずに！',type:'hard',trust:25,money:100000},
+    {emoji:'🙋',title:'かいぎで リーダーシップを はっきする',desc:'せっきょくてきに はつげんして チームを まとめると しんようUP！',type:'mid',trust:15,money:50000},
+    {emoji:'⏰',title:'しめきりを かならず まもる',desc:'プロとしての やくそくを まもることが さいだいの しんよう！',type:'mid',trust:15,money:30000},
+  ],
+  retire:[
+    {emoji:'💝',title:'ちいきの ボランティアを する',desc:'みかえりを もとめずに ひとを たすけると さいだいの しんよう！',type:'easy',trust:10,money:5000},
+    {emoji:'📚',title:'わかい ひとに けいけんを おしえる',desc:'つみあげた ちしきと けいけんを つぎの せだいに つたえよう！',type:'mid',trust:15,money:20000},
+  ],
+};
+
+const EVENTS={
+  elem:[
+    {emoji:'🎁',title:'おとしだまを もらった！',desc:'おじいちゃんから おとしだま！',amount:10000,trust:0,type:'pos'},
+    {emoji:'🤒',title:'かぜを ひいた',desc:'びょういん にいったよ。おかねが かかった。',amount:-2000,trust:0,type:'neg'},
+    {emoji:'🏆',title:'さくぶんで しょうを とった！',desc:'どりょくが みのった！しんようも UP！',amount:5000,trust:3,type:'pos'},
+    {emoji:'😢',title:'ともだちとの やくそくを やぶった',desc:'たいせつな やくそくを わすれてしまった…しんようダウン。',amount:0,trust:-8,type:'neg'},
+  ],
+  mid:[
+    {emoji:'⚽',title:'ぶかつ がっしゅくひ',desc:'がっしゅくがある！おかねが かかる。',amount:-20000,trust:0,type:'neg'},
+    {emoji:'💬',title:'ともだちの ひみつを まもった',desc:'やくそくを まもり しんらいされた！',amount:0,trust:8,type:'pos'},
+    {emoji:'📱',title:'スマホを なくした',desc:'べんしょう…おかねも しんようも ダウン。',amount:-30000,trust:-5,type:'neg'},
+    {emoji:'🤝',title:'こまっている ともだちを たすけた',desc:'みかえりを もとめずに たすけた！しんようだいUP！',amount:0,trust:12,type:'pos'},
+  ],
+  high:[
+    {emoji:'🎓',title:'だいがく じゅけんの ひよう',desc:'じゅくだい・じゅけんりょうが かかる！',amount:-50000,trust:0,type:'neg'},
+    {emoji:'⏰',title:'バイトに ちこくした…',desc:'てんちょうに おこられた。しんようダウン！',amount:-5000,trust:-10,type:'neg'},
+    {emoji:'💝',title:'バイトさきに かんしゃされた',desc:'いっしょうけんめい はたらいて ひょうかUP！しんようも UP！',amount:20000,trust:10,type:'pos'},
+  ],
+  univ:[
+    {emoji:'💰',title:'しょうがくきんの へんさい',desc:'へんさいが はじまった…きじつを まもろう！',amount:-30000,trust:0,type:'neg'},
+    {emoji:'🤝',title:'へんさいを きじつどおりに はらった',desc:'ちゃんと かえせた！しんようUP！',amount:0,trust:8,type:'pos'},
+  ],
+  work:[
+    {emoji:'💰',title:'ボーナス しきゅう！',desc:'しんようの つみかさねが ボーナスに！',amount:500000,trust:5,type:'pos'},
+    {emoji:'🎉',title:'しょうしん！',desc:'しんようの つみかさねが しょうしんに つながった！',amount:100000,trust:15,type:'pos'},
+    {emoji:'😱',title:'ミスを かくした…',desc:'あとで バレてしまった。しょうじきに いえば よかった…しんようダウン。',amount:-50000,trust:-20,type:'neg'},
+    {emoji:'📈',title:'かぶが V字かいふく！',desc:'ながく もちつづけた かいが あった！',amount:200000,trust:0,type:'pos'},
+    {emoji:'🤕',title:'たいちょうを くずした',desc:'しばらく やすんだ。しんようは さがらなかった（ちゃんと ほうこくしたから）',amount:-150000,trust:0,type:'neg'},
+  ],
+  retire:[
+    {emoji:'🏥',title:'にゅういん した',desc:'いりょうひが たいへん…でも しんよう ざんだかが あって たすかった。',amount:-300000,trust:0,type:'neg'},
+    {emoji:'💝',title:'こどもが たすけてくれた',desc:'そだてた しんようが かぞくに かえってきた！',amount:50000,trust:5,type:'pos'},
+    {emoji:'🌸',title:'かんしゃじょうを もらった',desc:'ちいきへの こうけんが みとめられた！しんようの そうけっさん！',amount:30000,trust:10,type:'pos'},
+  ],
+};
+
+const ACHIEVEMENTS=[
+  {emoji:'💰',name:'はじめての ちょきん',desc:'ちょきんを する',key:'firstSave'},
+  {emoji:'📈',name:'はじめての とうし',desc:'とうしを する',key:'firstInvest'},
+  {emoji:'🤝',name:'しんよう マスター',desc:'しんようが 80いじょう',key:'trust80'},
+  {emoji:'💯',name:'しんよう パーフェクト',desc:'しんようが 100に なる',key:'trust100'},
+  {emoji:'🏆',name:'100まんえん たっせい！',desc:'しさんが 100まんえん',key:'million'},
+  {emoji:'💎',name:'おくり人！',desc:'しさんが 1おくえん',key:'billionaire'},
+  {emoji:'🌟',name:'じんせいの たつじん',desc:'ろうごまで いきぬく',key:'retired'},
+  {emoji:'🏅',name:'やくそくの ひと',desc:'ミッションを 10かい たっせい',key:'mission10'},
+  {emoji:'🦁',name:'ちょうせんしゃ',desc:'むずかしい ミッションを 3かい',key:'hard3'},
+];
+
+// ======== CPU キャラ ========
+const CPU_CHARS = [
+  {name:'けんた', avatar:'🐱', strategy:'saver',   money:3000, savings:0, invest:0, investVal:0, trust:50, age:10, month:1, job:null, workedMonths:0},
+  {name:'さくら', avatar:'🐶', strategy:'investor', money:3000, savings:0, invest:0, investVal:0, trust:50, age:10, month:1, job:null, workedMonths:0},
+  {name:'りく',   avatar:'🐼', strategy:'truster',  money:3000, savings:0, invest:0, investVal:0, trust:50, age:10, month:1, job:null, workedMonths:0},
+];
+
+function cpuAdvance(cpu){
+  const stage = STAGES.find(s=>cpu.age>=s.age[0]&&cpu.age<=s.age[1])||STAGES[4];
+  const jobs = JOBS[stage.id]||JOBS.work;
+  // ジョブ選択（戦略による）
+  let job;
+  if(cpu.strategy==='saver') job = jobs[0];
+  else if(cpu.strategy==='investor') job = jobs[Math.min(jobs.length-1, Math.floor(jobs.length/2))];
+  else job = jobs.find(j=>j.trust<=cpu.trust)||jobs[0];
+
+  let earned = job.salary;
+  if(job.id==='youtuber'){ const r=Math.random(); earned=r<0.1?200000:r<0.3?30000:r<0.6?5000:0; }
+
+  const exps = EXPENSES[stage.id]||EXPENSES.work;
+  const totalExp = exps.reduce((s,e)=>s+e.amount,0);
+  cpu.money += earned - totalExp;
+  if(cpu.money < 0) cpu.money = 0;
+  if(earned>0) cpu.workedMonths++;
+
+  // 信用
+  cpu.trust = Math.min(100, cpu.trust + (job.trustEarn||0));
+  if(cpu.strategy==='truster') cpu.trust = Math.min(100, cpu.trust + 3);
+
+  // 貯金・投資（戦略）
+  if(cpu.money > 5000){
+    if(cpu.strategy==='saver'){
+      cpu.savings += Math.floor(cpu.money * 0.5);
+      cpu.money = Math.floor(cpu.money * 0.5);
+    } else if(cpu.strategy==='investor' && cpu.money > 20000){
+      const inv = Math.floor(cpu.money * 0.4);
+      cpu.invest += inv; cpu.investVal += inv;
+      cpu.money -= inv;
+    }
+  }
+
+  // 投資変動
+  if(cpu.investVal > 0){
+    const r = -0.08 + Math.random() * 0.20;
+    cpu.investVal = Math.round(cpu.investVal * (1+r));
+  }
+
+  // ランダムイベント
+  if(Math.random() < 0.12){
+    const evts = EVENTS[stage.id]||EVENTS.work;
+    const ev = evts[Math.floor(Math.random()*evts.length)];
+    cpu.money += ev.amount;
+    if(cpu.money < 0) cpu.money = 0;
+    cpu.trust = Math.max(0, Math.min(100, cpu.trust + ev.trust));
+  }
+
+  cpu.month++;
+  if(cpu.month>12){cpu.month=1;cpu.age++;}
+}
+
+function cpuTotal(cpu){ return cpu.money + cpu.savings + cpu.investVal; }
+
+// ======== ゲーム状態 ========
+let G = {
+  name:'', avatar:'🧒', dream:null,
+  age:10, month:1,
+  money:3000, savings:0,
+  investAmount:0, investValue:0, selectedInvest:null,
+  selectedJob:null,
+  trust:50,
+  totalEarned:0, totalSpent:0, workedMonths:0,
+  missionsDone:0, hardMissionsDone:0,
+  achievements:{},
+  pendingMissions:[],
+};
+let selAv = '🧒', selDream = null;
+
+// ======== キャラ作成 ========
+function goChar(){
+  initAudio();
+  startBGM();
+  playSE('click');
+  showScreen('sChar');
+  renderCharScreen();
+}
+
+function renderCharScreen(){
+  document.getElementById('avGrid').innerHTML = AVATARS.map(a=>
+    `<div class="av ${a===selAv?'sel':''}" onclick="pickAv(this,'${a}')">${a}</div>`
+  ).join('');
+  document.getElementById('drGrid').innerHTML = DREAMS.map(d=>
+    `<div class="dr" id="dr_${d.bonus}" onclick="pickDr('${d.bonus}')"><span class="de">${d.emoji}</span>${d.name}</div>`
+  ).join('');
+}
+
+function pickAv(el, a){
+  playSE('click');
+  selAv = a;
+  document.querySelectorAll('.av').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function pickDr(b){
+  playSE('click');
+  selDream = DREAMS.find(d=>d.bonus===b);
+  document.querySelectorAll('.dr').forEach(e=>e.classList.remove('sel'));
+  document.getElementById('dr_'+b).classList.add('sel');
+}
+
+function startGame(){
+  const n = document.getElementById('charName').value.trim();
+  if(!n){ alert('なまえを いれてね！'); return; }
+  if(!selDream){ alert('ゆめを えらんでね！'); return; }
+  G.name = n; G.avatar = selAv; G.dream = selDream;
+  playSE('stage');
+  showScreen('sMain');
+  initMain();
+}
+
+// ======== メイン ========
+function initMain(){
+  updateHeader(); updateStats(); updateTrust();
+  renderStage(); renderJobs(); renderExpenses();
+  renderBuyGrid(); renderInvestList(); renderMissions();
+  renderAchievements(); updateAsset(); updateGraph();
+  renderCPU();
+}
+
+function getStage(){ return STAGES.find(s=>G.age>=s.age[0]&&G.age<=s.age[1])||STAGES[STAGES.length-1]; }
+
+function updateHeader(){
+  const st = getStage();
+  document.getElementById('hAv').textContent = G.avatar;
+  document.getElementById('hNm').textContent = G.name;
+  document.getElementById('hSt').textContent = st.name;
+  document.getElementById('hAg').textContent = G.age+'さい';
+  document.getElementById('lifeP').style.width = Math.min(100,((G.age-10)/70)*100)+'%';
+}
+
+function updateStats(){
+  document.getElementById('stM').textContent = fmt(G.money);
+  document.getElementById('stS').textContent = fmt(G.savings);
+  document.getElementById('stI').textContent = fmt(G.investValue);
+  document.getElementById('invSt').textContent = `とうし中: ${fmt(G.investValue)}（もとで: ${fmt(G.investAmount)}）`;
+}
+
+function updateTrust(){
+  const t = Math.max(0, Math.min(100, G.trust));
+  G.trust = t;
+  document.getElementById('tVal').textContent = t+'/100';
+  document.getElementById('tFill').style.width = t+'%';
+  document.getElementById('tTxt').textContent = t;
+  let color, rating;
+  if(t>=90){color='linear-gradient(to right,#1abc9c,#2ecc71)';rating='🌟🌟🌟 しんよう: でんせつ！';}
+  else if(t>=70){color='linear-gradient(to right,#27ae60,#a8e063)';rating='⭐⭐⭐ しんよう: とても たかい！';}
+  else if(t>=50){color='linear-gradient(to right,#f7971e,#ffd200)';rating='⭐⭐ しんよう: ふつう';}
+  else if(t>=30){color='linear-gradient(to right,#e74c3c,#ff7675)';rating='⭐ しんよう: ひくめ…';}
+  else{color='linear-gradient(to right,#c0392b,#e74c3c)';rating='⚠️ しんよう: きけん！';}
+  document.getElementById('tFill').style.background = color;
+  document.getElementById('tRating').textContent = rating;
+}
+
+function renderCPU(){
+  const players = [
+    {name:G.name, avatar:G.avatar, money:G.money+G.savings+G.investValue, trust:G.trust, isPlayer:true},
+    ...CPU_CHARS.map(c=>({name:c.name, avatar:c.avatar, money:cpuTotal(c), trust:c.trust, isPlayer:false, obj:c}))
+  ];
+  players.sort((a,b)=>b.money-a.money);
+
+  document.getElementById('cpuRow').innerHTML = players.map((p,i)=>`
+    <div class="cpu-card">
+      <div class="cpu-rank">${i+1}</div>
+      <span class="cpu-av ${p.isPlayer?'':'cpu-anim'}">${p.avatar}</span>
+      <div class="cpu-name">${p.isPlayer?'⭐'+p.name:p.name}</div>
+      <div class="cpu-money">${fmt(p.money)}</div>
+      <div style="font-size:10px;color:var(--trust);">🤝${p.trust}</div>
+      <div class="cpu-trust-mini"><div class="cpu-trust-fill" style="width:${p.trust}%;"></div></div>
+    </div>
+  `).join('');
+}
+
 function renderStage(){
-  const st=getStage();
-  document.getElementById('stageBanner').innerHTML=`
-    <div style="background:${st.color};border-radius:14px;padding:14px;margin-bottom:12px;text-align:center;">
-      <div style="font-size:42px;margin-bottom:5px;">${st.emoji}</div>
-      <div style="font-size:16px;font-weight:700;">${st.name}（${G.age}才・${G.month}月）</div>
-      <div style="font-size:12px;opacity:.85;margin-top:4px;line-height:1.6;">${st.desc}</div>
+  const st = getStage();
+  document.getElementById('stageBanner').innerHTML = `
+    <div class="stage-banner" style="background:${st.color}">
+      <span class="stage-emoji">${st.emoji}</span>
+      <div class="stage-name">${st.name}（${G.age}さい・${G.month}がつ）</div>
+      <div class="stage-desc">${st.desc}</div>
     </div>`;
   updateAsset();
 }
 
 function updateAsset(){
-  const total=G.money+G.savings+G.investValue;
-  document.getElementById('assetCard').innerHTML=`
-    <div style="font-size:13px;font-weight:700;margin-bottom:7px;">📊 今のしさん</div>
-    <div style="font-size:13px;line-height:2;">
-      💰 もちがね: <b>${G.money.toLocaleString()}円</b><br>
-      🏦 ちょきん: <b>${G.savings.toLocaleString()}円</b><br>
-      📈 とうし時価: <b>${G.investValue.toLocaleString()}円</b><br>
-      🏆 しさん合計: <b style="color:var(--green);">${total.toLocaleString()}円</b><br>
-      🤝 信用スコア: <b style="color:var(--trust);">${G.trust}/100</b>
+  const total = G.money+G.savings+G.investValue;
+  document.getElementById('assetCard').innerHTML = `
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px;">📊 いまの しさん</div>
+    <div style="font-size:15px;line-height:2.2;">
+      💰 もちがね: <b>${G.money.toLocaleString()}えん</b><br>
+      🏦 ちょきん: <b>${G.savings.toLocaleString()}えん</b><br>
+      📈 とうし じか: <b>${G.investValue.toLocaleString()}えん</b><br>
+      🏆 しさん ごうけい: <b style="color:var(--green);font-size:18px;">${total.toLocaleString()}えん</b><br>
+      🤝 しんよう: <b style="color:var(--trust);">${G.trust}/100</b>
     </div>`;
 }
 
 function renderJobs(){
-  const st=getStage();
-  const jobs=JOBS[st.id]||JOBS.work;
-  document.getElementById('jobGrid').innerHTML=jobs.map(j=>{
-    const locked=G.trust<j.trust;
-    return`<div class="job-card ${G.selectedJob&&G.selectedJob.id===j.id?'sel':''} ${locked?'locked':''}" onclick="${locked?'':'selectJob(\''+j.id+'\')'}" >
+  const st = getStage();
+  const jobs = JOBS[st.id]||JOBS.work;
+  document.getElementById('jobGrid').innerHTML = jobs.map(j=>{
+    const locked = G.trust < j.trust;
+    return `<div class="job-card ${G.selectedJob&&G.selectedJob.id===j.id?'sel':''} ${locked?'locked':''}"
+      onclick="${locked?'':('selJob(\''+j.id+'\')')}">
       <span class="je">${j.emoji}</span>
       <div class="jn">${j.name}</div>
-      <div class="js">${j.id==='youtuber'?'収入？？':'月'+j.salary.toLocaleString()+'円'}</div>
-      ${j.trust>0?`<div class="jt">🤝 信用${j.trust}以上必要</div>`:''}
-      ${locked?`<div class="locked-msg">🔒 信用が足りない</div>`:''}
+      <div class="js">${j.id==='youtuber'?'しゅうにゅう？？':'つき'+j.salary.toLocaleString()+'えん'}</div>
+      ${j.trust>0?`<div class="jt">🤝 しんよう${j.trust}いじょう ひつよう</div>`:''}
+      ${locked?'<div style="font-size:11px;color:var(--red);">🔒 しんようが たりない</div>':''}
     </div>`;
   }).join('');
 }
 
-function selectJob(id){
-  const st=getStage();
-  const jobs=JOBS[st.id]||JOBS.work;
-  G.selectedJob=jobs.find(j=>j.id===id);
+function selJob(id){
+  playSE('click');
+  const st = getStage();
+  const jobs = JOBS[st.id]||JOBS.work;
+  G.selectedJob = jobs.find(j=>j.id===id);
   renderJobs();
-  const card=document.getElementById('jobInfoCard');
-  card.style.display='block';
-  document.getElementById('jobInfoName').textContent=G.selectedJob.emoji+' '+G.selectedJob.name;
-  document.getElementById('jobInfoSalary').textContent=G.selectedJob.id==='youtuber'?'収入: 運次第！':'月給: '+G.selectedJob.salary.toLocaleString()+'円';
-  document.getElementById('jobInfoDesc').textContent=G.selectedJob.desc;
+  const card = document.getElementById('jobInfo');
+  card.style.display = 'block';
+  document.getElementById('jiName').textContent = G.selectedJob.emoji+' '+G.selectedJob.name;
+  document.getElementById('jiSalary').textContent = G.selectedJob.id==='youtuber'?'しゅうにゅう: うんしだい！':'つききゅう: '+G.selectedJob.salary.toLocaleString()+'えん';
+  document.getElementById('jiDesc').textContent = G.selectedJob.desc;
 }
 
 function renderExpenses(){
-  const st=getStage();
-  const exps=EXPENSES[st.id]||EXPENSES.work;
-  const total=exps.reduce((s,e)=>s+e.amount,0);
-  document.getElementById('expenseCard').innerHTML=
-    exps.map(e=>`<div class="exp-item"><div class="el"><span class="ee">${e.emoji}</span><div><div class="en">${e.name}</div></div></div><div class="ep">-${e.amount.toLocaleString()}円</div></div>`).join('')+
-    `<div class="exp-item" style="background:#fff3e0;border-radius:8px;padding:8px;margin-top:5px;"><div class="el"><span class="ee">💸</span><div><div class="en">合計</div></div></div><div class="ep" style="font-size:15px;">-${total.toLocaleString()}円/月</div></div>`;
+  const st = getStage();
+  const exps = EXPENSES[st.id]||EXPENSES.work;
+  const total = exps.reduce((s,e)=>s+e.amount,0);
+  document.getElementById('expCard').innerHTML =
+    exps.map(e=>`<div class="exp-item"><div class="el"><span class="ee">${e.emoji}</span><div><div class="en">${e.name}</div></div></div><div class="ep">-${e.amount.toLocaleString()}えん</div></div>`).join('')+
+    `<div class="exp-item" style="background:#fff3e0;border-radius:10px;padding:10px;margin-top:6px;">
+      <div class="el"><span class="ee">💸</span><div><div class="en">ごうけい</div></div></div>
+      <div class="ep" style="font-size:17px;">-${total.toLocaleString()}えん/つき</div>
+    </div>`;
 }
 
 function renderBuyGrid(){
-  document.getElementById('buyGrid').innerHTML=BUY.map(b=>`
+  document.getElementById('buyGrid').innerHTML = BUY.map(b=>`
     <div class="job-card" onclick="doBuy('${b.id}')">
       <span class="je">${b.emoji}</span>
       <div class="jn">${b.name}</div>
-      <div class="js">-${b.price.toLocaleString()}円</div>
-      ${b.trustUp?`<div class="jt">🤝 信用+${b.trustUp}</div>`:''}
+      <div class="js">-${b.price.toLocaleString()}えん</div>
+      ${b.trustUp?`<div class="jt">🤝 しんよう+${b.trustUp}</div>`:''}
     </div>`).join('');
 }
 
 function renderInvestList(){
-  document.getElementById('investList').innerHTML=INVESTMENTS.map(inv=>`
+  document.getElementById('investList').innerHTML = INVESTMENTS.map(inv=>`
     <div class="inv-card ${G.selectedInvest===inv.id?'sel-inv':''}" onclick="selInv('${inv.id}')">
       <div class="inv-head">
         <div class="inv-ic">${inv.emoji}</div>
         <div><div class="inv-nm">${inv.name}</div><span class="badge ${inv.bc}">${inv.badge}</span></div>
       </div>
       <div class="inv-desc">${inv.desc}</div>
-      <div class="inv-stats">${inv.stats.map(s=>`<div class="inv-st">${s}</div>`).join('')}</div>
     </div>`).join('');
 }
-function selInv(id){G.selectedInvest=id;renderInvestList();}
+function selInv(id){ playSE('click'); G.selectedInvest=id; renderInvestList(); }
 
 function renderMissions(){
-  const st=getStage();
-  const ms=MISSIONS[st.id]||MISSIONS.work;
+  const st = getStage();
+  const ms = MISSIONS[st.id]||MISSIONS.work;
   if(G.pendingMissions.length===0){
-    G.pendingMissions=ms.slice(0,2).map((m,i)=>({...m,done:false,id:'m'+i}));
+    G.pendingMissions = ms.slice(0,2).map((m,i)=>({...m,done:false,id:'m'+i}));
   }
-  document.getElementById('missionList').innerHTML=G.pendingMissions.filter(m=>!m.done).map(m=>`
-    <div class="mission-card ${m.type}">
-      <div class="mission-header">
-        <div class="mission-icon">${m.emoji}</div>
-        <div>
-          <div class="mission-title">${m.title}</div>
-          <div class="mission-trust">🤝 信用 +${m.trustReward}</div>
+  const active = G.pendingMissions.filter(m=>!m.done);
+  document.getElementById('missionList').innerHTML = active.length
+    ? active.map(m=>`
+      <div class="mission-card ${m.type}">
+        <span class="mission-emoji">${m.emoji}</span>
+        <div class="mission-title">${m.title}</div>
+        <div class="mission-desc">${m.desc}</div>
+        <div class="mission-rewards">
+          ${m.money>0?`<div class="reward-tag">💰 +${m.money.toLocaleString()}えん</div>`:''}
+          <div class="reward-tag">🤝 しんよう +${m.trust}</div>
+          <div class="reward-tag">むずかしさ: ${m.type==='hard'?'むずかしい':m.type==='mid'?'ふつう':'かんたん'}</div>
         </div>
-      </div>
-      <div class="mission-desc">${m.desc}</div>
-      <div class="mission-reward">
-        ${m.moneyReward>0?`<div class="reward-badge">💰 +${m.moneyReward.toLocaleString()}円</div>`:''}
-        <div class="reward-badge">🤝 +${m.trustReward}</div>
-        <div class="reward-badge">難易度: ${m.difficulty}</div>
-      </div>
-      <div class="mission-btns">
-        <button class="mbtn mbtn-accept" onclick="acceptMission('${m.id}')">✅ 引き受ける！</button>
-        <button class="mbtn mbtn-refuse" onclick="refuseMission('${m.id}')">❌ ことわる</button>
-      </div>
-    </div>`).join('');
-  if(G.pendingMissions.filter(m=>!m.done).length===0){
-    document.getElementById('missionList').innerHTML='<div class="card" style="text-align:center;color:var(--text2);">新しいミッションを待ってるよ！<br>次の月になると新しいミッションが来るよ。</div>';
-  }
+        <div class="mission-btns">
+          <button class="mbtn mbtn-yes" onclick="acceptMission('${m.id}')">✅ ひきうける！</button>
+          <button class="mbtn mbtn-no" onclick="refuseMission('${m.id}')">❌ ことわる</button>
+        </div>
+      </div>`).join('')
+    : '<div class="card" style="text-align:center;color:var(--text2);font-size:14px;">あたらしい ミッションを まっているよ！<br>つぎの月に あたらしい ミッションが くるよ。</div>';
 }
 
 function acceptMission(id){
-  const m=G.pendingMissions.find(x=>x.id===id);
+  const m = G.pendingMissions.find(x=>x.id===id);
   if(!m) return;
-  m.done=true;
-  G.trust=Math.min(100,G.trust+m.trustReward);
-  G.money+=m.moneyReward;
+  m.done = true;
+  G.trust = Math.min(100, G.trust+m.trust);
+  G.money += m.money;
   G.missionsDone++;
   if(m.type==='hard') G.hardMissionsDone++;
-  if(G.missionsDone>=10) G.achievements['mission10']=true;
-  if(G.hardMissionsDone>=3) G.achievements['hard3']=true;
-  addLog(`✅ ミッション達成「${m.title}」！信用+${m.trustReward}、${m.moneyReward>0?m.moneyReward.toLocaleString()+'円獲得！':''}`, 'trst');
   checkAch();
-  updateStats();updateTrust();renderMissions();renderAchievements();
-  showModal('🎉','ミッション達成！',`「${m.title}」\nやり遂げたよ！\n${m.moneyReward>0?m.moneyReward.toLocaleString()+'円もらったよ！\n':''}信用が積みあがった！`,m.moneyReward||null,m.trustReward);
+  addLog(`✅ ミッション「${m.title}」たっせい！しんよう+${m.trust}`, 'trst');
+  updateStats(); updateTrust(); renderMissions(); renderAchievements();
+  showTrustEffect(window.innerWidth/2-60, window.innerHeight/2, m.trust);
+  if(m.money>0) showCoinEffect(window.innerWidth/2, window.innerHeight/2);
+  showModal('🎉','ミッション たっせい！',`「${m.title}」\nやりとげたよ！\n${m.money>0?m.money.toLocaleString()+'えん もらったよ！\n':''}しんようが つみあがった！`,m.money||null,m.trust);
 }
 
 function refuseMission(id){
-  const m=G.pendingMissions.find(x=>x.id===id);
+  const m = G.pendingMissions.find(x=>x.id===id);
   if(!m) return;
-  m.done=true;
-  const trustLoss=m.type==='hard'?-3:-5;
-  G.trust=Math.max(0,G.trust+trustLoss);
-  addLog(`❌ ミッションをことわった「${m.title}」。信用${trustLoss}`, 'neg');
-  updateTrust();renderMissions();
-  showModal('😔','ことわってしまった…',`「${m.title}」をことわったよ。\n断ることで信用が少し下がってしまった…\n難しくても引き受けることが信用につながるよ！`,null,trustLoss);
+  m.done = true;
+  const tl = m.type==='hard'?-3:-5;
+  G.trust = Math.max(0, G.trust+tl);
+  playSE('sad');
+  addLog(`❌ ミッション「${m.title}」をことわった。しんよう${tl}`, 'neg');
+  updateTrust(); renderMissions();
+  showModal('😔','ことわって しまった…',`「${m.title}」を ことわったよ。\nしんようが すこし さがって しまった…\nむずかしくても ひきうけることが しんように つながるよ！`,null,tl);
 }
 
 function renderAchievements(){
-  document.getElementById('achGrid').innerHTML=ACHIEVEMENTS.map(a=>`
+  document.getElementById('achGrid').innerHTML = ACHIEVEMENTS.map(a=>`
     <div class="ach ${G.achievements[a.key]?'unlk':''}">
       <div class="aei">${a.emoji}</div>
       <div class="anm">${a.name}</div>
@@ -863,9 +1172,9 @@ function renderAchievements(){
 }
 
 function updateGraph(){
-  const total=G.money+G.savings+G.investValue;
-  const maxM=Math.max(total,1);
-  const p=v=>Math.max(4,Math.min(96,(v/maxM)*100));
+  const total = G.money+G.savings+G.investValue;
+  const max = Math.max(total,1);
+  const p = v=>Math.max(4,Math.min(96,(v/max)*100));
   document.getElementById('gM').style.width=p(G.money)+'%';document.getElementById('gMt').textContent=fmt(G.money);
   document.getElementById('gS').style.width=p(G.savings)+'%';document.getElementById('gSt').textContent=fmt(G.savings);
   document.getElementById('gI').style.width=p(G.investValue)+'%';document.getElementById('gIt').textContent=fmt(G.investValue);
@@ -874,49 +1183,37 @@ function updateGraph(){
 
 // ======== アクション ========
 function doWork(){
-  if(!G.selectedJob){showModal('❗','しごとをえらんでね！','「しごと」タブでしごとをえらんでね！',null,null);switchTab('work');return;}
-  let earned=G.selectedJob.salary;
+  if(!G.selectedJob){showModal('❗','しごとを えらんでね！','「しごと」タブで えらんでね！',null,null);switchTab('work');return;}
+  let earned = G.selectedJob.salary;
   if(G.selectedJob.id==='youtuber'){
     const r=Math.random();
-    if(r<0.05) earned=2000000;
-    else if(r<0.15) earned=200000;
-    else if(r<0.35) earned=30000;
-    else if(r<0.6) earned=5000;
-    else earned=0;
+    if(r<0.05)earned=2000000;else if(r<0.15)earned=200000;else if(r<0.35)earned=30000;else if(r<0.6)earned=5000;else earned=0;
   }
-  // 仕事で信用も少し積む
-  const trustEarn=G.selectedJob.trustEarn||0;
-  advanceMonth(earned,trustEarn);
+  advanceMonth(earned, G.selectedJob.trustEarn||0);
 }
 
 function nextMonth(){
-  const st=getStage();
-  const jobs=JOBS[st.id]||JOBS.work;
+  const st=getStage();const jobs=JOBS[st.id]||JOBS.work;
   if(!G.selectedJob&&jobs.length>0) G.selectedJob=jobs[0];
-  const earned=G.selectedJob?(G.selectedJob.id==='youtuber'?0:G.selectedJob.salary):0;
-  const te=G.selectedJob?G.selectedJob.trustEarn||0:0;
-  advanceMonth(earned,te);
+  advanceMonth(G.selectedJob?G.selectedJob.salary:0, G.selectedJob?G.selectedJob.trustEarn||0:0);
 }
 
 function nextYear(){
   for(let i=0;i<12;i++){
-    const st=getStage();
-    const jobs=JOBS[st.id]||[];
+    const st=getStage();const jobs=JOBS[st.id]||[];
     if(!G.selectedJob&&jobs.length>0) G.selectedJob=jobs[0];
-    const earned=G.selectedJob?G.selectedJob.salary:0;
-    const te=G.selectedJob?G.selectedJob.trustEarn||0:0;
-    _silentMonth(earned,te);
+    _silentMonth(G.selectedJob?G.selectedJob.salary:0, G.selectedJob?G.selectedJob.trustEarn||0:0);
   }
   updateAll();
-  showModal('⏭','1年すすんだよ！',`${G.age}才になったよ！\nしさん: ${(G.money+G.savings+G.investValue).toLocaleString()}円\n信用: ${G.trust}/100`,null,null);
+  playSE('stage');
+  showModal('⏭','1ねん すすんだよ！',`${G.age}さいに なったよ！\nしさん: ${fmt(G.money+G.savings+G.investValue)}\nしんよう: ${G.trust}/100`,null,null);
 }
 
-function _silentMonth(earned,trustEarn){
+function _silentMonth(earned, trustEarn){
   const st=getStage();
   const exps=EXPENSES[st.id]||EXPENSES.work;
   const totalExp=exps.reduce((s,e)=>s+e.amount,0);
-  G.money+=earned-totalExp;
-  if(G.money<0) G.money=0;
+  G.money+=earned-totalExp;if(G.money<0)G.money=0;
   G.totalEarned+=earned;G.totalSpent+=totalExp;
   if(earned>0){G.workedMonths++;G.trust=Math.min(100,G.trust+trustEarn);}
   if(G.investValue>0){
@@ -925,17 +1222,17 @@ function _silentMonth(earned,trustEarn){
     G.investValue=Math.round(G.investValue*(1+r));
   }
   G.month++;if(G.month>12){G.month=1;G.age++;}
-  // 新ミッションを補充
+  // CPU も進める
+  CPU_CHARS.forEach(c=>cpuAdvance(c));
   if(G.pendingMissions.filter(m=>!m.done).length===0) refreshMissions();
   checkAch();
 }
 
-function advanceMonth(earned,trustEarn){
+function advanceMonth(earned, trustEarn){
   const st=getStage();
   const exps=EXPENSES[st.id]||EXPENSES.work;
   const totalExp=exps.reduce((s,e)=>s+e.amount,0);
-  G.money+=earned-totalExp;
-  G.totalEarned+=earned;G.totalSpent+=totalExp;
+  G.money+=earned-totalExp;G.totalEarned+=earned;G.totalSpent+=totalExp;
   if(earned>0){G.workedMonths++;G.trust=Math.min(100,G.trust+trustEarn);}
   let invChange=0;
   if(G.investValue>0){
@@ -946,6 +1243,10 @@ function advanceMonth(earned,trustEarn){
   }
   if(G.money<0) G.money=0;
   G.month++;if(G.month>12){G.month=1;G.age++;}
+
+  // CPU も進める
+  CPU_CHARS.forEach(c=>cpuAdvance(c));
+
   if(G.pendingMissions.filter(m=>!m.done).length===0) refreshMissions();
 
   // ランダムイベント（18%）
@@ -953,8 +1254,7 @@ function advanceMonth(earned,trustEarn){
   const evtList=EVENTS[st.id]||EVENTS.work;
   if(Math.random()<0.18){
     event=evtList[Math.floor(Math.random()*evtList.length)];
-    G.money+=event.amount;
-    if(G.money<0) G.money=0;
+    G.money+=event.amount;if(G.money<0)G.money=0;
     G.trust=Math.max(0,Math.min(100,G.trust+event.trust));
   }
 
@@ -962,19 +1262,91 @@ function advanceMonth(earned,trustEarn){
   if(G.age>80){endGame();return;}
 
   const net=earned-totalExp;
+
+  if(earned>0) showCoinEffect(window.innerWidth/2, window.innerHeight/2);
+  if(trustEarn>0) showTrustEffect(window.innerWidth/2-80, window.innerHeight/2+30, trustEarn);
+  if(net<0) playSE('sad'); else playSE('coin');
+
   if(event){
-    addLog(`${G.age}才${G.month}月: ⚡ ${event.title}（金${event.amount>=0?'+':''}${event.amount.toLocaleString()}円、信用${event.trust>=0?'+':''}${event.trust}）`,event.type==='pos'?'evt':'neg');
+    addLog(`${G.age}さい${G.month}がつ: ⚡ ${event.title}（${event.amount>=0?'+':''}${event.amount.toLocaleString()}えん、しんよう${event.trust>=0?'+':''}${event.trust}）`,event.type==='pos'?'trst':'neg');
     showModal(event.emoji,event.title,event.desc,event.amount||null,event.trust||null);
   } else {
-    addLog(`${G.age}才${G.month}月: ${G.selectedJob?G.selectedJob.emoji+G.selectedJob.name+'で'+earned.toLocaleString()+'円':'やすんだ'}。収支${net>=0?'+':''}${net.toLocaleString()}円、信用+${trustEarn}`,net>=0?'pos':'neg');
-    if(invChange!==0) addLog(`📈 とうし ${invChange>=0?'+':''}${invChange.toLocaleString()}円`,invChange>=0?'pos':'neg');
+    addLog(`${G.age}さい${G.month}がつ: ${G.selectedJob?G.selectedJob.emoji+G.selectedJob.name+'で'+earned.toLocaleString()+'えん':'やすんだ'}。しゅうし${net>=0?'+':''}${net.toLocaleString()}えん、しんよう+${trustEarn}`,net>=0?'pos':'neg');
+    if(invChange!==0) addLog(`📈 とうし ${invChange>=0?'+':''}${invChange.toLocaleString()}えん`,invChange>=0?'pos':'neg');
     showModal(
       earned>100000?'🤑':earned>0?'😊':'😴',
       earned>0?'おつかれさま！':'やすんだよ',
-      `${G.selectedJob?G.selectedJob.name+'で'+earned.toLocaleString()+'円かせいだよ！\n':'やすんだよ。\n'}生活費: -${totalExp.toLocaleString()}円\n手元: ${net>=0?'+':''}${net.toLocaleString()}円${invChange!==0?'\n投資: '+(invChange>=0?'+':'')+invChange.toLocaleString()+'円':''}${trustEarn>0?'\n信用: +'+trustEarn:''}`,
-      net,trustEarn>0?trustEarn:null
+      `${G.selectedJob?G.selectedJob.name+'で'+earned.toLocaleString()+'えん かせいだよ！\n':'やすんだよ。\n'}せいかつひ: -${totalExp.toLocaleString()}えん\nてもと: ${net>=0?'+':''}${net.toLocaleString()}えん${trustEarn>0?'\nしんよう: +'+trustEarn:''}`,
+      net, trustEarn>0?trustEarn:null
     );
   }
+}
+
+function updateAll(){
+  updateHeader();updateStats();updateTrust();renderStage();
+  renderJobs();updateGraph();renderAchievements();renderMissions();renderCPU();
+}
+
+function doBuy(id){
+  playSE('click');
+  const item=BUY.find(b=>b.id===id);
+  if(G.money<item.price){showModal('💔','おかねが たりない！',`${item.name}は${item.price.toLocaleString()}えん。もちがねが たりないよ！`,null,null);return;}
+  G.money-=item.price;G.totalSpent+=item.price;
+  const tu=item.trustUp||0;
+  if(tu>0) G.trust=Math.min(100,G.trust+tu);
+  addLog(`🛍 ${item.name}を かった（-${item.price.toLocaleString()}えん）`,'neg');
+  updateStats();updateTrust();
+  showModal(item.emoji,`${item.name}を かったよ！`,`${item.price.toLocaleString()}えん つかったよ。${tu>0?'\nしんよう +'+tu+'！（ちしきに とうし！）':''}`,null,tu||null);
+}
+
+function doSave(){
+  const amt=parseInt(document.getElementById('saveAmt').value);
+  if(!amt||amt<=0){showModal('❗','きんがくを いれてね','',null,null);return;}
+  if(amt>G.money){showModal('💔','おかねが たりない！',`もちがねは${G.money.toLocaleString()}えんだよ。`,null,null);return;}
+  G.money-=amt;G.savings+=amt;
+  document.getElementById('saveAmt').value='';
+  G.achievements['firstSave']=true;
+  playSE('coin');
+  addLog(`🏦 ${amt.toLocaleString()}えんを ちょきんした！`,'pos');
+  updateStats();checkAch();renderAchievements();
+  showModal('🏦','ちょきんしたよ！',`${amt.toLocaleString()}えんを ちょきんに いれたよ！えらい！`,amt,null);
+}
+
+function doWithdraw(){
+  const amt=parseInt(document.getElementById('wdAmt').value)||G.savings;
+  if(G.savings<=0){showModal('❗','ちょきんが ないよ','まず ちょきんを しよう！',null,null);return;}
+  const a=Math.min(amt,G.savings);
+  G.money+=a;G.savings-=a;
+  document.getElementById('wdAmt').value='';
+  addLog(`🏧 ちょきん${a.toLocaleString()}えんを おろした`,'neg');
+  updateStats();
+  showModal('🏧','おろしたよ',`${a.toLocaleString()}えんを もちがねに うつしたよ。`,null,null);
+}
+
+function doInvest(){
+  if(!G.selectedInvest){showModal('❗','とうし先を えらんでね','うえの リストから えらんでね！',null,null);return;}
+  const amt=parseInt(document.getElementById('invAmt').value);
+  if(!amt||amt<=0){showModal('❗','きんがくを いれてね','',null,null);return;}
+  if(amt>G.money){showModal('💔','おかねが たりない！',`もちがねは${G.money.toLocaleString()}えんだよ。`,null,null);return;}
+  G.money-=amt;G.investAmount+=amt;G.investValue+=amt;
+  document.getElementById('invAmt').value='';
+  G.achievements['firstInvest']=true;
+  playSE('coin');
+  addLog(`📈 ${amt.toLocaleString()}えんを とうしした！`,'trst');
+  updateStats();checkAch();renderAchievements();
+  showModal('📈','とうし したよ！',`${amt.toLocaleString()}えんを とうしに まわしたよ！\nじっくり ながく もつことが たいせつ！`,null,null);
+}
+
+function doSell(){
+  if(G.investValue<=0){showModal('❗','とうしを していないよ','まず とうしを しよう！',null,null);return;}
+  const profit=G.investValue-G.investAmount;
+  const v=G.investValue;
+  if(profit>0) G.achievements['investProfit']=true;
+  G.money+=v;G.investAmount=0;G.investValue=0;
+  if(profit>0) playSE('coin'); else playSE('sad');
+  addLog(`💰 とうしを うった！${v.toLocaleString()}えん（りえき${profit>=0?'+':''}${profit.toLocaleString()}えん）`,profit>=0?'pos':'neg');
+  updateStats();checkAch();renderAchievements();
+  showModal(profit>=0?'🎉':'😢',profit>=0?'もうかったよ！':'そんを してしまった…',`${v.toLocaleString()}えんに なったよ！\n${profit>=0?'りえき: +':'そんしつ: '}${Math.abs(profit).toLocaleString()}えん\n${profit>=0?'ながく もつことが たいせつ！':'とうしは リスクも あるよ…でも まなべた！'}`,profit,null);
 }
 
 function refreshMissions(){
@@ -984,128 +1356,89 @@ function refreshMissions(){
   G.pendingMissions=shuffled.slice(0,2).map((m,i)=>({...m,done:false,id:'m'+Date.now()+i}));
 }
 
-function updateAll(){
-  updateHeader();updateStats();updateTrust();renderStage();
-  renderJobs();updateGraph();renderAchievements();renderMissions();
-}
-
-function doBuy(id){
-  const item=BUY.find(b=>b.id===id);
-  if(G.money<item.price){showModal('💔','おかねがたりない！',`${item.name}は${item.price.toLocaleString()}円。もちがねが足りない！`,null,null);return;}
-  G.money-=item.price;G.totalSpent+=item.price;
-  const tu=item.trustUp||0;
-  if(tu>0) G.trust=Math.min(100,G.trust+tu);
-  addLog(`🛍 ${item.name}を買った（-${item.price.toLocaleString()}円）${tu>0?'信用+'+tu:''}`, 'neg');
-  updateStats();updateTrust();
-  showModal(item.emoji,item.name+'をかったよ！',item.price.toLocaleString()+'円つかったよ。'+(tu>0?'信用 +'+tu:''),-item.price,tu||null);
-}
-
-function doSave(){
-  const amt=parseInt(document.getElementById('saveAmt').value);
-  if(!amt||amt<=0){showModal('❗','きんがくをいれてね','',null,null);return;}
-  if(amt>G.money){showModal('💔','おかねがたりない！',`もちがねは${G.money.toLocaleString()}円だよ。`,null,null);return;}
-  G.money-=amt;G.savings+=amt;
-  document.getElementById('saveAmt').value='';
-  G.achievements['firstSave']=true;
-  addLog(`🏦 ${amt.toLocaleString()}円をちょきんした！`,'pos');
-  updateStats();checkAch();renderAchievements();
-  showModal('🏦','ちょきんしたよ！',`${amt.toLocaleString()}円をちょきんにいれたよ！えらい！`,amt,null);
-}
-
-function doWithdraw(){
-  const amt=parseInt(document.getElementById('withdrawAmt').value)||G.savings;
-  if(G.savings<=0){showModal('❗','ちょきんがないよ','まずちょきんをしよう！',null,null);return;}
-  const a=Math.min(amt,G.savings);
-  G.money+=a;G.savings-=a;
-  document.getElementById('withdrawAmt').value='';
-  addLog(`🏧 ちょきん${a.toLocaleString()}円をおろした`,'neg');
-  updateStats();
-  showModal('🏧','おろしたよ',`${a.toLocaleString()}円をもちがねにうつしたよ。`,null,null);
-}
-
-function doInvest(){
-  if(!G.selectedInvest){showModal('❗','とうし先をえらんでね','上のリストからえらんでね！',null,null);return;}
-  const amt=parseInt(document.getElementById('investAmt').value);
-  if(!amt||amt<=0){showModal('❗','きんがくをいれてね','',null,null);return;}
-  if(amt>G.money){showModal('💔','おかねがたりない！',`もちがねは${G.money.toLocaleString()}円だよ。`,null,null);return;}
-  G.money-=amt;G.investAmount+=amt;G.investValue+=amt;
-  document.getElementById('investAmt').value='';
-  G.achievements['firstInvest']=true;
-  addLog(`📈 ${amt.toLocaleString()}円をとうしした！`,'evt');
-  updateStats();checkAch();renderAchievements();
-  showModal('📈','とうししたよ！',`${amt.toLocaleString()}円をとうしにまわしたよ！\nじっくり長く持つことが大事！`,null,null);
-}
-
-function doSell(){
-  if(G.investValue<=0){showModal('❗','とうしをしていないよ','まずとうしをしよう！',null,null);return;}
-  const profit=G.investValue-G.investAmount;
-  const v=G.investValue;
-  if(profit>0) G.achievements['investProfit']=true;
-  G.money+=v;G.investAmount=0;G.investValue=0;
-  addLog(`💰 とうしをうった！${v.toLocaleString()}円（利益${profit>=0?'+':''}${profit.toLocaleString()}円）`,profit>=0?'pos':'neg');
-  updateStats();checkAch();renderAchievements();
-  showModal(profit>=0?'🎉':'😢',profit>=0?'もうかったよ！':'そんをしてしまった…',`${v.toLocaleString()}円になったよ！\n${profit>=0?'利益: +':'損失: '}${Math.abs(profit).toLocaleString()}円\n${profit>=0?'長く持つことが大事！':'とうしはリスクもあるよ…でも学べた！'}`,profit,null);
-}
-
 function checkAch(){
   const total=G.money+G.savings+G.investValue;
-  if(total>=1000000) G.achievements['million']=true;
-  if(total>=100000000) G.achievements['billionaire']=true;
-  if(G.workedMonths>=12) G.achievements['worked12']=true;
-  if(G.trust>=80) G.achievements['trust80']=true;
-  if(G.trust>=100) G.achievements['trust100']=true;
-  if(G.age>=60) G.achievements['retired']=true;
-  if(G.missionsDone>=10) G.achievements['mission10']=true;
-  if(G.hardMissionsDone>=3) G.achievements['hard3']=true;
+  if(total>=1000000)G.achievements['million']=true;
+  if(total>=100000000)G.achievements['billionaire']=true;
+  if(G.workedMonths>=12)G.achievements['worked12']=true;
+  if(G.trust>=80)G.achievements['trust80']=true;
+  if(G.trust>=100)G.achievements['trust100']=true;
+  if(G.age>=60)G.achievements['retired']=true;
+  if(G.missionsDone>=10)G.achievements['mission10']=true;
+  if(G.hardMissionsDone>=3)G.achievements['hard3']=true;
 }
 
 // ======== エンド ========
 function endGame(){
-  const total=G.money+G.savings+G.investValue;
+  stopBGM();
   G.achievements['retired']=true;checkAch();
-
-  // 総合スコア（お金60%+信用40%）
-  const moneyScore=Math.min(100,total/5000000*60);
+  const total=G.money+G.savings+G.investValue;
+  const moneyScore=Math.min(60,total/5000000*60);
   const trustScore=G.trust*0.4;
   const totalScore=Math.round(moneyScore+trustScore);
 
-  let rank,emoji,advice;
-  if(totalScore>=90){rank='🏆 伝説の人生！お金も信用も完璧！';emoji='💎';}
-  else if(totalScore>=75){rank='🌟 素晴らしい人生！';emoji='🌟';}
-  else if(totalScore>=60){rank='😊 バランスのよい人生！';emoji='😊';}
-  else if(totalScore>=40){rank='😅 まずまずの人生…';emoji='😅';}
-  else{rank='😰 もっとがんばれたかも…';emoji='😢';}
+  let rank,advice;
+  if(totalScore>=90){rank='🏆 でんせつの じんせい！おかねも しんようも かんぺき！';}
+  else if(totalScore>=75){rank='🌟 すばらしい じんせい！';}
+  else if(totalScore>=60){rank='😊 バランスの よい じんせい！';}
+  else if(totalScore>=40){rank='😅 まあまあの じんせい…';}
+  else{rank='😰 もっと がんばれた かも…';}
 
-  if(G.trust<50) advice='信用をもっと大切にしよう！約束を守り、難しい依頼にも挑戦することが大事。信用はお金より大切な財産なんだ。';
-  else if(total<5000000) advice='お金をもっと早くから投資しておけばよかったね。「複利」のチカラで長期投資するとどんどんふえるよ！';
-  else advice='お金も信用もしっかり育てた人生だったね！信用があるから良い仕事が来て、それがお金につながる。このサイクルが大切！';
+  if(G.trust<50) advice='しんようを もっと たいせつに しよう！やくそくを まもり、むずかしい おねがいにも ちょうせんすることが たいせつ。しんようは おかねより たいせつな ざいさんなんだ。';
+  else if(total<5000000) advice='おかねを もっと はやくから とうしして おけば よかったね。ふくりの チカラで ちょうきとうしすると どんどん ふえるよ！';
+  else advice='おかねも しんようも しっかり そだてた じんせいだったね！しんようが あるから いい しごとが きて、それが おかねに つながる。このサイクルが たいせつ！';
 
-  showScreen('screenEnd');
-  document.getElementById('endEmoji').textContent=emoji;
-  document.getElementById('endName').textContent=G.avatar+' '+G.name+' さん';
-  document.getElementById('endMoney').textContent=total.toLocaleString()+'円';
-  document.getElementById('endTrust').textContent=G.trust+'/100';
-  document.getElementById('endRank').textContent=rank;
+  // ランキング
+  const allPlayers = [
+    {name:G.name, avatar:G.avatar, total, trust:G.trust, isPlayer:true},
+    ...CPU_CHARS.map(c=>({name:c.name, avatar:c.avatar, total:cpuTotal(c), trust:c.trust, isPlayer:false}))
+  ].sort((a,b)=>b.total-a.total);
+
+  showScreen('sEnd');
+  document.getElementById('endNm').textContent = G.avatar+' '+G.name+' さんの じんせい';
+  document.getElementById('endMoney').textContent = total.toLocaleString()+'えん';
+  document.getElementById('endTrust').textContent = G.trust+'/100';
+  document.getElementById('endRank').textContent = rank;
+
+  // 表彰台
+  const top3 = allPlayers.slice(0,3);
+  const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
+  const classes = ['p2','p1','p3'];
+  const heights = ['🥈','🥇','🥉'];
+  document.getElementById('endPodium').innerHTML = podiumOrder.map((p,i)=>`
+    <div class="podium-item ${classes[i]}">
+      <span class="podium-av">${p.avatar}</span>
+      <div class="podium-name">${p.isPlayer?'⭐'+p.name:p.name}</div>
+      <div class="podium-block">${heights[i]}</div>
+    </div>`).join('');
+
   document.getElementById('endStats').innerHTML=`
-    <div class="esr"><span>💰 しさん合計</span><span>${total.toLocaleString()}円</span></div>
-    <div class="esr"><span>🤝 最終信用スコア</span><span>${G.trust}/100</span></div>
-    <div class="esr"><span>📊 総合スコア</span><span>${totalScore}/100</span></div>
-    <div class="esr"><span>💼 はたらいた月数</span><span>${G.workedMonths}ヶ月</span></div>
-    <div class="esr"><span>✅ ミッション達成数</span><span>${G.missionsDone}回</span></div>
-    <div class="esr"><span>🏅 実績解除</span><span>${Object.keys(G.achievements).length}/${ACHIEVEMENTS.length}</span></div>
-    <div class="esr"><span>💰 かせいだ合計</span><span>${G.totalEarned.toLocaleString()}円</span></div>`;
-  document.getElementById('endAdvice').textContent=advice;
+    <div class="esr"><span>💰 しさん ごうけい</span><span>${total.toLocaleString()}えん</span></div>
+    <div class="esr"><span>🤝 さいしゅう しんよう</span><span>${G.trust}/100</span></div>
+    <div class="esr"><span>📊 そうごう スコア</span><span>${totalScore}/100</span></div>
+    <div class="esr"><span>💼 はたらいた つき</span><span>${G.workedMonths}かげつ</span></div>
+    <div class="esr"><span>✅ ミッション たっせい</span><span>${G.missionsDone}かい</span></div>
+    <div class="esr"><span>🏅 じっせき かいじょ</span><span>${Object.keys(G.achievements).length}/${ACHIEVEMENTS.length}</span></div>`;
+  document.getElementById('endAdvice').textContent = advice;
+
+  // 花火エフェクト
+  for(let i=0;i<8;i++){
+    setTimeout(()=>{
+      showCoinEffect(Math.random()*window.innerWidth, Math.random()*window.innerHeight*0.5);
+    }, i*200);
+  }
+  playSE('stage');
 }
 
 // ======== ユーティリティ ========
 function fmt(n){
-  if(n<0)return'-'+fmt(-n);
-  if(n>=100000000)return Math.floor(n/100000000)+'億円';
-  if(n>=10000)return Math.floor(n/10000)+'万'+((n%10000)>=1000?Math.floor((n%10000)/1000)+'千':'')+'円';
-  return n.toLocaleString()+'円';
+  if(n<0) return '-'+fmt(-n);
+  if(n>=100000000) return Math.floor(n/100000000)+'おくえん';
+  if(n>=10000) return Math.floor(n/10000)+'まん'+(n%10000>=1000?Math.floor((n%10000)/1000)+'せん':'')+'えん';
+  return n.toLocaleString()+'えん';
 }
 
-function addLog(text,type=''){
+function addLog(text, type=''){
   const log=document.getElementById('logArea');
   const item=document.createElement('div');
   item.className=`log-item ${type}`;item.textContent=text;
@@ -1114,37 +1447,36 @@ function addLog(text,type=''){
 }
 
 function switchTab(id){
+  playSE('click');
   const ids=['life','trust','work','money','invest','log'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',ids[i]===id));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
   if(id==='log'){updateGraph();renderAchievements();}
-  if(id==='work')renderJobs();
+  if(id==='work') renderJobs();
   if(id==='money'){renderExpenses();renderBuyGrid();}
-  if(id==='trust'){renderMissions();updateTrust();}
-  if(id==='invest')renderInvestList();
+  if(id==='trust') renderMissions();
+  if(id==='invest') renderInvestList();
 }
 
-let modalYesCb=null,modalNoCb=null;
-function showModal(emoji,title,desc,amount,trust){
-  document.getElementById('mEmoji').textContent=emoji;
-  document.getElementById('mTitle').textContent=title;
-  document.getElementById('mDesc').textContent=desc||'';
-  const ae=document.getElementById('mAmt');
-  if(amount!==null&&amount!==undefined){ae.style.display='block';ae.textContent=(amount>=0?'+':'')+amount.toLocaleString()+'円';ae.className='ma'+(amount<0?' neg':'');}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showModal(emoji, title, desc, amount, trust){
+  document.getElementById('mE').textContent=emoji;
+  document.getElementById('mT').textContent=title;
+  document.getElementById('mD').textContent=desc||'';
+  const ae=document.getElementById('mA');
+  if(amount!==null&&amount!==undefined&&amount!==0){ae.style.display='block';ae.textContent=(amount>=0?'+':'')+amount.toLocaleString()+'えん';ae.className='ma'+(amount<0?' neg':'');}
   else ae.style.display='none';
-  const te=document.getElementById('mTrust');
-  if(trust!==null&&trust!==undefined){te.style.display='block';te.textContent='🤝 信用 '+(trust>=0?'+':'')+trust;te.className='trust-change'+(trust<0?' neg':'');}
+  const te=document.getElementById('mTr');
+  if(trust!==null&&trust!==undefined&&trust!==0){te.style.display='block';te.textContent='🤝 しんよう '+(trust>=0?'+':'')+trust;te.className='tc'+(trust<0?' neg':'');}
   else te.style.display='none';
-  document.getElementById('mChoiceBtns').style.display='none';
-  document.getElementById('mBtnOk').style.display='block';
-  document.getElementById('modalOverlay').classList.add('show');
+  document.getElementById('ov').classList.add('show');
 }
-function closeModal(){document.getElementById('modalOverlay').classList.remove('show');}
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='screenChar'){initChar();}}
-
-// 起動
-initChar();
+function closeModal(){ document.getElementById('ov').classList.remove('show'); }
 </script>
 </body>
 </html>
