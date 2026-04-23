@@ -997,7 +997,7 @@ function doBuy(id){
   if(tu>0) G.trust=Math.min(100,G.trust+tu);
   addLog(`🛍 ${item.name}を買った（-${item.price.toLocaleString()}円）${tu>0?'信用+'+tu:''}`, 'neg');
   updateStats();updateTrust();
-  showModal(item.emoji,`${item.name}をかったよ！`,`${item.price.toLocaleString()}円つかったよ。${tu>0?'\n信用 +'+tu+'！（知識に投資！）':''}`,-item.price,tu||null);
+  showModal(item.emoji,item.name+'をかったよ！',item.price.toLocaleString()+'円つかったよ。'+(tu>0?'信用 +'+tu:''),-item.price,tu||null);
 }
 
 function doSave(){
