@@ -647,10 +647,10 @@ let selAvatar='🧒', selDream=null;
 
 // ======== キャラ作成 ========
 function initChar(){
-  document.getElementById('avatarGrid').innerHTML=AVATARS.map(a=>`<div class="av ${a===selAvatar?'sel':''}" onclick="pickAv('${a}')">${a}</div>`).join('');
+  document.getElementById('avatarGrid').innerHTML=AVATARS.map(a=>`<div class="av ${a===selAvatar?'sel':''}" onclick="pickAv(this,'${a}')">${a}</div>`).join('');
   document.getElementById('dreamGrid').innerHTML=DREAMS.map(d=>`<div class="dr" id="dr_${d.bonus}" onclick="pickDream('${d.bonus}')"><span class="de">${d.emoji}</span>${d.name}</div>`).join('');
 }
-function pickAv(a){selAvatar=a;document.querySelectorAll('.av').forEach(el=>el.classList.remove('sel'));event.target.classList.add('sel');}
+function pickAv(el,a){selAvatar=a;document.querySelectorAll('.av').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');}
 function pickDream(b){selDream=DREAMS.find(d=>d.bonus===b);document.querySelectorAll('.dr').forEach(el=>el.classList.remove('sel'));document.getElementById('dr_'+b).classList.add('sel');}
 function startGame(){
   const n=document.getElementById('charName').value.trim();
